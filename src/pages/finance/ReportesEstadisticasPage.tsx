@@ -8,7 +8,7 @@ import {
 } from 'recharts';
 import {
   Package, DollarSign, Truck, Mail, Download, Printer,
-  AlertTriangle, Target, Bell, Calendar, TrendingUp, TrendingDown,
+  AlertTriangle, Bell, Calendar, TrendingUp, TrendingDown,
   Send, FileText, Server, Settings, Wifi, MapPin,
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
@@ -101,6 +101,11 @@ const tipStyle = {
   },
   labelStyle:   { color: '#F9FAFB', fontWeight: 600 },
   itemStyle:    { color: '#9CA3AF' },
+};
+
+const toNumericTooltipValue = (value: number | string | ReadonlyArray<number | string> | undefined) => {
+  if (Array.isArray(value)) return Number(value[0] ?? 0);
+  return Number(value ?? 0);
 };
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -636,7 +641,7 @@ export const ReportesEstadisticasPage = () => {
                       tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
                     <YAxis type="category" dataKey="name" axisLine={false} tickLine={false}
                       tick={{ fontSize: 11, fill: tick }} width={90} />
-                    <Tooltip {...tipStyle} formatter={(v: number) => [`Bs. ${v.toLocaleString()}`, 'Capital']} />
+                    <Tooltip {...tipStyle} formatter={v => [`Bs. ${toNumericTooltipValue(v).toLocaleString()}`, 'Capital']} />
                     <Bar dataKey="value" radius={[0, 6, 6, 0]} maxBarSize={20}>
                       {stockData.map((_: any, i: number) => (
                         <Cell key={i} fill={i % 2 === 0 ? TEAL : AMBER} opacity={0.85} />
@@ -664,7 +669,7 @@ export const ReportesEstadisticasPage = () => {
                         <Cell key={entry.name} fill={MERMA_COLORS[entry.name] ?? '#6B7280'} />
                       ))}
                     </Pie>
-                    <Tooltip {...tipStyle} formatter={(v: number) => [`Bs. ${v.toLocaleString()}`, '']} />
+                    <Tooltip {...tipStyle} formatter={v => [`Bs. ${toNumericTooltipValue(v).toLocaleString()}`, '']} />
                     <Legend iconType="circle" iconSize={7}
                       formatter={v => <span style={{ fontSize: 11, color: tick }}>{v}</span>} />
                   </PieChart>
@@ -766,7 +771,7 @@ export const ReportesEstadisticasPage = () => {
                     <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: tick }} />
                     <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: tick }}
                       tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
-                    <Tooltip {...tipStyle} formatter={(v: number, n: string) => [`Bs. ${v.toLocaleString()}`, n]} />
+                    <Tooltip {...tipStyle} formatter={(v, n) => [`Bs. ${toNumericTooltipValue(v).toLocaleString()}`, String(n ?? '')]} />
                     <Area type="monotone" dataKey="Ingresos" stroke={GREEN} strokeWidth={2}
                       fill="url(#gIng)" dot={false} activeDot={{ r: 4, fill: GREEN }} />
                     <Area type="monotone" dataKey="Egresos"  stroke={AMBER} strokeWidth={2}
@@ -787,7 +792,7 @@ export const ReportesEstadisticasPage = () => {
                 <ResponsiveContainer width="100%" height={170}>
                   <BarChart data={areaData.slice(-6)} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
                     <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: tick }} />
-                    <Tooltip {...tipStyle} formatter={(v: number) => [`Bs. ${v.toLocaleString()}`, 'Ingresos']} />
+                    <Tooltip {...tipStyle} formatter={v => [`Bs. ${toNumericTooltipValue(v).toLocaleString()}`, 'Ingresos']} />
                     <Bar dataKey="Ingresos" fill={TEAL} radius={[4, 4, 0, 0]} maxBarSize={28} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -899,7 +904,7 @@ export const ReportesEstadisticasPage = () => {
                       tick={{ fontSize: 10, fill: tick }} interval={0} />
                     <YAxis axisLine={false} tickLine={false}
                       tick={{ fontSize: 10, fill: tick }} allowDecimals={false} />
-                    <Tooltip {...tipStyle} formatter={(v: number) => [`${v} despachos`, 'Total']} />
+                    <Tooltip {...tipStyle} formatter={v => [`${toNumericTooltipValue(v)} despachos`, 'Total']} />
                     <Bar dataKey="Despachos" fill={BLUE} radius={[6, 6, 0, 0]} maxBarSize={40} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -915,7 +920,7 @@ export const ReportesEstadisticasPage = () => {
                     <PolarAngleAxis dataKey="subject" tick={{ fontSize: 10, fill: tick }} />
                     <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 8, fill: tick }} tickCount={4} />
                     <Radar name="Eficiencia" dataKey="A" stroke={TEAL} fill={TEAL} fillOpacity={0.2} strokeWidth={2} />
-                    <Tooltip {...tipStyle} formatter={(v: number) => [`${v}%`, 'Eficiencia']} />
+                    <Tooltip {...tipStyle} formatter={v => [`${toNumericTooltipValue(v)}%`, 'Eficiencia']} />
                   </RadarChart>
                 </ResponsiveContainer>
                 <div className="mt-2 space-y-2.5">
