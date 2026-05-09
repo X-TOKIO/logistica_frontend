@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Garantiza que los strings de permisos del JWT coincidan con la DB actual
       // (evita que tokens viejos con typos sigan activos tras una corrección de datos).
       try {
-        const res = await fetch('http://localhost:3000/auth/refresh', {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/refresh`, {
           headers: { Authorization: `Bearer ${storedToken}` },
         });
 
@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const storedToken = localStorage.getItem('access_token');
       if (!storedToken) return;
       try {
-        const res = await fetch('http://localhost:3000/auth/refresh', {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/refresh`, {
           headers: { Authorization: `Bearer ${storedToken}` },
         });
         if (!res.ok) return;
@@ -127,7 +127,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
      try {
         const locallyStoredToken = localStorage.getItem('access_token');
         if (!locallyStoredToken) return;
-        const response = await fetch('http://localhost:3000/auth/refresh', {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/refresh`, {
            headers: { Authorization: `Bearer ${locallyStoredToken}` }
         });
         if (response.ok) {
