@@ -1,0 +1,293 @@
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+  /* ── TEMA JOVENES · Light — Mantis Puro ──────────── */
+  :root {
+    --color-primary: #1668dc;
+    --color-secondary: #13a8a8;
+    --color-background: #bbbbbbb6;
+    --color-card: #ffffff;
+    --color-sidebar: #2c2c2c;
+    --color-text: rgba(0, 0, 0, 0.87);
+    --color-divider: #f0f0f0;
+    --color-surface: #fafafa;
+    --color-text-muted: rgba(0, 0, 0, 0.45);
+
+    /* ── Contraste adaptativo para botones toggle (Modo Día) ── */
+    --btn-inactive-border: #cbd5e1;
+    --btn-inactive-text:   #475569;
+    --btn-emerald-bg:      rgba(16, 185, 129, 0.10);
+    --btn-emerald-border:  #10b981;
+    --btn-emerald-text:    #065f46;
+    --btn-amber-bg:        rgba(245, 158, 11, 0.10);
+    --btn-amber-border:    #d97706;
+    --btn-amber-text:      #78350f;
+    --btn-blue-bg:         rgba(22, 104, 220, 0.10);
+    --btn-blue-border:     #1668dc;
+    --btn-blue-text:       #1e3a5f;
+  }
+
+  /* ── TEMA JOVENES · Dark — Mantis Dashboard Exacto ──────────────────────────── */
+  .dark.theme-jovenes {
+    --color-primary: #1668dc;
+    /* Azul Mantis */
+    --color-secondary: #13a8a8;
+    /* Teal info Mantis */
+    --color-background: #121212;
+    /* Fondo global */
+    --color-card: #1e1e1e;
+    /* Tarjetas y header */
+    --color-sidebar: #1e1e1e;
+    /* Sidebar */
+    --color-text: rgba(255, 255, 255, 0.87);
+    /* Texto principal */
+    --color-divider: rgba(255, 255, 255, 0.05);
+    /* Bordes sutiles */
+    --color-surface: #141414;
+    /* Card oscura / inputs */
+    --color-text-muted: rgba(255, 255, 255, 0.45);
+    /* Texto secundario */
+  }
+
+  /* ── TEMA NIÑOS · Light ──────────────────────────────────────── */
+  .theme-ninos {
+    --color-primary: #ec4899;
+    --color-secondary: #f59e0b;
+    --color-background: #fffdf0;
+    --color-card: #fff8f0;
+    --color-sidebar: #fefce8;
+    --color-text: #374151;
+    --color-divider: #fde68a;
+    --color-surface: #fef9f0;
+    --color-text-muted: rgba(55, 65, 81, 0.50);
+    /* btn variables heredadas de :root — mismo contraste claro */
+  }
+
+  /* ── TEMA NIÑOS · Dark ───────────────────────────────────────── */
+  .dark.theme-ninos {
+    --color-primary: #f472b6;
+    --color-secondary: #fbbf24;
+    --color-background: #0A0E1A;
+    --color-card: #1a0f18;
+    --color-sidebar: #120c10;
+    --color-text: #fdf2f8;
+    --color-divider: #2d1826;
+    --color-surface: #1f1020;
+  }
+
+  /* ── TEMA ADULTOS · Light ────────────────────────────────────── */
+  .theme-adultos {
+    --color-primary: #0f766e;
+    --color-secondary: #b45309;
+    --color-background: #f8fafc;
+    --color-card: #f0fdfa;
+    --color-sidebar: #e6f7f5;
+    --color-text: #0f172a;
+    --color-divider: #ccfbf1;
+    --color-surface: #f0fdfa;
+  }
+
+  /* ── TEMA ADULTOS · Dark ─────────────────────────────────────── */
+  .dark.theme-adultos {
+    --color-primary: #14b8a6;
+    --color-secondary: #d97706;
+    --color-background: #0A0E1A;
+    --color-card: #0d1f1e;
+    --color-sidebar: #091817;
+    --color-text: #f8fafc;
+    --color-divider: #1a3330;
+    --color-surface: #112220;
+  }
+
+  /* ── MODO OSCURO: contraste adaptativo para botones (todos los temas) ── */
+  .dark {
+    --btn-inactive-border: rgba(255, 255, 255, 0.12);
+    --btn-inactive-text:   rgba(255, 255, 255, 0.40);
+    --btn-emerald-bg:      rgba(16, 185, 129, 0.18);
+    --btn-emerald-border:  #10b981;
+    --btn-emerald-text:    #34d399;
+    --btn-amber-bg:        rgba(245, 158, 11, 0.18);
+    --btn-amber-border:    #f59e0b;
+    --btn-amber-text:      #fbbf24;
+    --btn-blue-bg:         rgba(22, 104, 220, 0.20);
+    --btn-blue-border:     #1668dc;
+    --btn-blue-text:       #93c5fd;
+  }
+}
+
+body {
+  @apply bg-background text-text transition-colors duration-300;
+  font-family: 'Public Sans', 'Inter', system-ui, sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Mantis Dark: Tipografía ─────────────────────────────────── */
+.dark.theme-jovenes h1,
+.dark.theme-jovenes h2,
+.dark.theme-jovenes h3,
+.dark.theme-jovenes h4 {
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.dark.theme-jovenes h5,
+.dark.theme-jovenes h6 {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.dark.theme-jovenes p,
+.dark.theme-jovenes span,
+.dark.theme-jovenes td,
+.dark.theme-jovenes label,
+.dark.theme-jovenes input {
+  font-weight: 400;
+  /* Elimina el 300 que las hace ilegibles */
+  color: var(--color-text);
+}
+
+.dark.theme-jovenes .text-muted {
+  color: var(--color-text-muted);
+}
+
+/* ── Mantis Dark: Geometría (Todo a 4px, CERO redondez extrema) ── */
+.dark.theme-jovenes .rounded-sm,
+.dark.theme-jovenes .rounded,
+.dark.theme-jovenes .rounded-md,
+.dark.theme-jovenes .rounded-lg,
+.dark.theme-jovenes .rounded-xl,
+.dark.theme-jovenes .rounded-2xl,
+.dark.theme-jovenes .rounded-3xl {
+  border-radius: 4px !important;
+}
+
+.dark.theme-jovenes .rounded-full {
+  border-radius: 50% !important;
+  /* Mantiene avatares redondos */
+}
+
+/* ── Mantis Dark: Sombras ────────────────────────────────────── */
+/* Mantis usa sombras ultra tenues para elevar las tarjetas #1e1e1e sobre el fondo #121212 */
+.dark.theme-jovenes .shadow-md,
+.dark.theme-jovenes .shadow-lg,
+.dark.theme-jovenes .shadow-xl,
+.dark.theme-jovenes .shadow-2xl {
+  box-shadow: rgba(0, 0, 0, 0.14) 0px 1px 1px 0px, rgba(0, 0, 0, 0.12) 0px 2px 1px 0px !important;
+  border: 1px solid var(--color-divider) !important;
+}
+
+/* ── Scrollbar ultra-delgado ─────────────────────────────────── */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ── Fade-in para KPI cards ─────────────────────────────────────── */
+@keyframes fadeInKpi {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── JOVENES LIGHT ONLY: Geometría recta — no toca el modo Dark ─── */
+html.theme-jovenes:not(.dark) .rounded-sm,
+html.theme-jovenes:not(.dark) .rounded,
+html.theme-jovenes:not(.dark) .rounded-md,
+html.theme-jovenes:not(.dark) .rounded-lg,
+html.theme-jovenes:not(.dark) .rounded-xl,
+html.theme-jovenes:not(.dark) .rounded-2xl,
+html.theme-jovenes:not(.dark) .rounded-3xl {
+  border-radius: 4px !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   TIPOGRAFÍA GLOBAL — Public Sans unificado en todo el sistema
+   ════════════════════════════════════════════════════════════════ */
+@layer base {
+  *, *::before, *::after {
+    font-family: 'Public Sans', 'Inter', system-ui, sans-serif;
+  }
+
+  /* Formularios: peso base 400, hereda la fuente del sistema */
+  input, select, textarea, button {
+    font-family: 'Public Sans', 'Inter', system-ui, sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+
+  /* Jerarquía tipográfica consistente */
+  h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
+  h4, h5, h6 { font-weight: 600; letter-spacing: -0.01em; }
+  p, li, td, th { letter-spacing: 0.005em; }
+
+  /* Contraste de opciones en <select> nativo (todos los temas) */
+  select option {
+    background-color: var(--color-card);
+    color: var(--color-text);
+    font-family: 'Public Sans', 'Inter', system-ui, sans-serif;
+    font-weight: 400;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   COMPONENTES UTILITARIOS — Botones toggle con contraste adaptativo
+   Se usan con: btn-toggle-inactive | btn-toggle-emerald | btn-toggle-amber
+   ════════════════════════════════════════════════════════════════ */
+@layer components {
+
+  /* Estado inactivo: visible en modo día y noche */
+  .btn-toggle-inactive {
+    border-color: var(--btn-inactive-border) !important;
+    color: var(--btn-inactive-text) !important;
+    opacity: 1 !important;
+  }
+  .btn-toggle-inactive:hover {
+    opacity: 0.75 !important;
+  }
+
+  /* Toggle activo — variante esmeralda (acciones positivas) */
+  .btn-toggle-emerald {
+    background: var(--btn-emerald-bg) !important;
+    border-color: var(--btn-emerald-border) !important;
+    color: var(--btn-emerald-text) !important;
+  }
+
+  /* Toggle activo — variante ámbar (crédito / advertencia) */
+  .btn-toggle-amber {
+    background: var(--btn-amber-bg) !important;
+    border-color: var(--btn-amber-border) !important;
+    color: var(--btn-amber-text) !important;
+  }
+
+  /* Toggle activo — variante azul (primario / info) */
+  .btn-toggle-blue {
+    background: var(--btn-blue-bg) !important;
+    border-color: var(--btn-blue-border) !important;
+    color: var(--btn-blue-text) !important;
+  }
+}
