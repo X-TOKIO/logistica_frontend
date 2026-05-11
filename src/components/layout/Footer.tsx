@@ -24,11 +24,11 @@ export const Footer = () => {
   }, [location.pathname]);
 
   return (
-    <footer className="flex justify-between items-center p-4 border-t border-black/10 dark:border-white/10 bg-background mt-auto transition-colors duration-300">
-      <div className="text-sm font-medium opacity-60">PARADISO Logistics © 2026</div>
-      <div className="flex items-center gap-2 text-sm font-bold text-primary bg-primary/10 px-4 py-1.5 rounded-full">
+    <footer className="flex flex-wrap justify-between items-center gap-2 p-3 sm:p-4 border-t border-black/10 dark:border-white/10 bg-background mt-auto transition-colors duration-300">
+      <div className="text-xs sm:text-sm font-medium opacity-60">PARADISO Logistics © 2026</div>
+      <div className="flex items-center gap-2 text-xs sm:text-sm font-bold text-primary bg-primary/10 px-3 sm:px-4 py-1.5 rounded-full">
         <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
-        Visitas en este módulo: {visitas}
+        Visitas: {visitas}
       </div>
     </footer>
   );

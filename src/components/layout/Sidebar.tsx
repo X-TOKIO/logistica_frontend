@@ -12,6 +12,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
+type SidebarProps = {
+  isOpen: boolean;
+  onClose: () => void;
+};
+
 type AccordionGroupProps = {
   title: string;
   icon: React.ReactNode;
@@ -103,7 +108,7 @@ const NavItem = ({
 
 // ── Sidebar ────────────────────────────────────────────────────────────────
 
-export const Sidebar = () => {
+export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { user, logout, hasPermission } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -140,10 +145,13 @@ export const Sidebar = () => {
   const [openReportes, setOpenReportes] = useState(() => startsWith('/reportes'));
   const [openAdmin, setOpenAdmin] = useState(() => ['/accesos', '/empleados', '/usuarios'].some(p => startsWith(p)));
 
-  const go = (path: string) => navigate(path);
+  const go = (path: string) => {
+    navigate(path);
+    onClose();
+  };
 
   // ── Jovenes Light: sidebar oscuro professional ────────────────────────
-  const { theme, mode } = useTheme();
+  const { theme, setTheme, mode } = useTheme();
   const _h = new Date().getHours();
   const _dark = mode === 'dark' || (mode === 'auto' && (_h >= 18 || _h < 6));
   const jl = theme === 'jovenes' && !_dark;
@@ -154,7 +162,12 @@ export const Sidebar = () => {
   } as React.CSSProperties : {};
 
   return (
-    <aside style={sidebarVars} className="w-64 h-screen fixed left-0 top-0 bg-sidebar border-r border-divider flex flex-col z-20 transition-colors duration-300">
+    <aside
+      style={sidebarVars}
+      className={`w-64 h-screen fixed left-0 top-0 bg-sidebar border-r border-divider flex flex-col z-20 transition-all duration-300
+        ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+      `}
+    >
 
       {/* Logo */}
       <div className="flex flex-col items-center justify-center py-4 px-6 border-b border-divider bg-sidebar h-28">
@@ -476,6 +489,18 @@ export const Sidebar = () => {
 
       {/* Footer */}
       <div className="p-5 border-t border-divider bg-sidebar">
+        {/* Selector de tema — visible en móvil (en desktop está en el header) */}
+        <div className="md:hidden mb-3">
+          <select
+            className="w-full bg-primary/10 text-primary border-none rounded-md px-3 py-2 font-semibold outline-none cursor-pointer text-sm"
+            value={theme}
+            onChange={e => setTheme(e.target.value as any)}
+          >
+            <option value="ninos">Tema: Niños</option>
+            <option value="jovenes">Tema: Jóvenes</option>
+            <option value="adultos">Tema: Adultos</option>
+          </select>
+        </div>
         <div className="mb-4 text-center">
           <p className="text-[10px] font-black opacity-40 uppercase tracking-widest mb-1">Operador Activo</p>
           <p className="text-sm font-bold truncate text-primary uppercase tracking-wider">{user?.username || 'Invitado'}</p>

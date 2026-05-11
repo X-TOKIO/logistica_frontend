@@ -39,7 +39,7 @@ export const ComprasPagosPage = () => {
 
    return (
     <div className="flex flex-col gap-6 w-full relative z-10 transition-all duration-300">
-      <h2 className="text-4xl font-black text-secondary drop-shadow-sm flex items-center gap-3 decoration-wavy">
+      <h2 className="text-2xl sm:text-4xl font-black text-secondary drop-shadow-sm flex items-center gap-3 decoration-wavy">
         <CreditCard className="w-10 h-10"/> Auditoría de Cuentas por Pagar
       </h2>
 
@@ -53,7 +53,7 @@ export const ComprasPagosPage = () => {
              const plazoLiquidado = items.filter(i => i.Estado === 'PAGADO').length;
 
              return (
-                 <div key={pagoId} className="bg-white/60 dark:bg-black/60 backdrop-blur-3xl border border-black/10 dark:border-white/10 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden flex flex-col md:flex-row gap-6">
+                 <div key={pagoId} className="bg-white/60 dark:bg-black/60 backdrop-blur-3xl border border-black/10 dark:border-white/10 rounded-[2rem] p-4 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col md:flex-row gap-6">
                     <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-secondary/10 blur-[100px] rounded-full pointer-events-none"></div>
                     
                     {/* Tarjeta de Resumen Compra */}

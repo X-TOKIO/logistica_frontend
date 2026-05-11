@@ -298,20 +298,20 @@ export const IngresosPage = () => {
     <div className="flex flex-col gap-6 w-full relative z-10 transition-all duration-300">
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-4xl font-black text-primary drop-shadow-sm flex items-center gap-3">
-          <PackageCheck className="w-10 h-10" /> Recepción de Mercancía
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <h2 className="text-2xl sm:text-4xl font-black text-primary drop-shadow-sm flex items-center gap-2 sm:gap-3">
+          <PackageCheck className="w-7 h-7 sm:w-10 sm:h-10" /> Recepción de Mercancía
         </h2>
         <button onClick={exportPDFGlobal}
-          className="bg-primary/10 text-primary px-4 py-2.5 rounded-md hover:bg-primary hover:text-white transition-colors flex items-center gap-2 font-bold shadow-sm border border-primary/20">
-          <Printer className="w-4 h-4" /> Exportar PDF Global
+          className="bg-primary/10 text-primary px-3 sm:px-4 py-2 sm:py-2.5 rounded-md hover:bg-primary hover:text-white transition-colors flex items-center gap-2 font-bold shadow-sm border border-primary/20 text-sm">
+          <Printer className="w-4 h-4" /> Exportar PDF
         </button>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-2">
 
         {/* ── Panel Izquierdo: Formulario ── */}
-        <div className="bg-card border border-divider rounded-md p-8 relative overflow-hidden h-max">
+        <div className="bg-card border border-divider rounded-md p-4 sm:p-8 relative overflow-hidden h-max">
           <h3 className="text-2xl font-black text-text mb-1">Nueva Recepción</h3>
           <p className="text-xs font-bold text-muted mb-6">
             Busca la compra por ID o N° de Factura para cargar los productos automáticamente.
@@ -399,7 +399,7 @@ export const IngresosPage = () => {
           </div>
 
           {/* Cabecera de la nota */}
-          <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
             <input type="date" value={fecha} onChange={e => setFecha(e.target.value)} className={INPUT} />
             <input type="time" value={hora}  onChange={e => setHora(e.target.value)}  className={INPUT} />
           </div>
@@ -413,7 +413,8 @@ export const IngresosPage = () => {
           {/* Tabla de recepción */}
           {detalles.length > 0 && (
             <div className="border border-divider rounded-xl overflow-hidden mb-6 relative z-10 bg-card">
-              <table className="w-full text-left text-sm">
+              <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm min-w-[450px]">
                 <thead className="bg-surface border-b border-divider">
                   <tr>
                     <th className="p-3 text-xs uppercase tracking-wider font-black text-text">Producto</th>
@@ -459,6 +460,7 @@ export const IngresosPage = () => {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           )}
 

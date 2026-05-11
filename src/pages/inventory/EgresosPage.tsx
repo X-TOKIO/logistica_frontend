@@ -378,38 +378,38 @@ export const EgresosPage = () => {
 
   return (
     <div className="flex flex-col gap-6 w-full relative z-10 transition-all duration-300">
-      <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-semibold text-[#BC2F32] dark:text-[#BC2F32] flex items-center gap-3">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-[#BC2F32] dark:text-[#BC2F32] flex items-center gap-2">
           Operación: Egreso / Despacho
         </h2>
-        <button onClick={exportPDFGlobal} className="bg-primary/10 text-primary px-4 py-2.5 rounded-md hover:bg-primary hover:text-white transition-colors flex items-center gap-2 font-semibold border border-primary/20">
-          <Printer className="w-4 h-4" /> EXPORTAR PDF GLOBAL
+        <button onClick={exportPDFGlobal} className="bg-primary/10 text-primary px-3 sm:px-4 py-2 sm:py-2.5 rounded-md hover:bg-primary hover:text-white transition-colors flex items-center gap-2 font-semibold border border-primary/20 text-sm">
+          <Printer className="w-4 h-4" /> Exportar PDF
         </button>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-2">
-        <div className="bg-card border border-divider rounded-md p-8 relative overflow-hidden h-max">
+        <div className="bg-card border border-divider rounded-md p-4 sm:p-8 relative overflow-hidden h-max">
           <h3 className="text-2xl font-semibold text-text mb-4">Nueva Boleta de Salida</h3>
 
           {/* Inputs de Fecha, Hora y Selectores */}
           <div className="flex flex-col gap-4 mb-4">
-            <div className="flex gap-4">
-              <select value={almacenGlobal} onChange={e => setAlmacenGlobal(e.target.value)} className="w-1/2 bg-surface rounded-md px-4 py-4 outline-none focus:ring-1 ring-primary border border-divider font-normal">
-                <option value="" className="bg-[#080808] text-white">-- Almacén Origen (Opcional) --</option>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <select value={almacenGlobal} onChange={e => setAlmacenGlobal(e.target.value)} className="w-full bg-surface rounded-md px-4 py-3 outline-none focus:ring-1 ring-primary border border-divider font-normal">
+                <option value="" className="bg-[#080808] text-white">-- Almacén Origen --</option>
                 {almacenes.length === 0
                   ? <option disabled className="bg-[#080808] text-[#888888]">Sin registros</option>
                   : almacenes.map(a => <option key={a.ID_Almacen} value={a.ID_Almacen} className="bg-[#080808] text-white">{a.Nombre}</option>)}
               </select>
-              <select value={sucursalGlobal} onChange={e => setSucursalGlobal(e.target.value)} className="w-1/2 bg-surface rounded-md px-4 py-4 outline-none focus:ring-1 ring-primary border border-divider font-normal">
-                <option value="" className="bg-[#080808] text-white">-- Sucursal Destino (Opcional) --</option>
+              <select value={sucursalGlobal} onChange={e => setSucursalGlobal(e.target.value)} className="w-full bg-surface rounded-md px-4 py-3 outline-none focus:ring-1 ring-primary border border-divider font-normal">
+                <option value="" className="bg-[#080808] text-white">-- Sucursal Destino --</option>
                 {sucursales.length === 0
                   ? <option disabled className="bg-[#080808] text-[#888888]">Sin registros</option>
                   : sucursales.map(s => <option key={s.ID_Sucursal} value={s.ID_Sucursal} className="bg-[#080808] text-white">{s.Nombre}</option>)}
               </select>
             </div>
-            <div className="flex gap-4">
-              <input type="date" required value={fecha} onChange={e => setFecha(e.target.value)} className="w-1/2 bg-surface rounded-md px-4 py-4 outline-none focus:ring-1 ring-primary border border-divider font-normal" />
-              <input type="time" required value={hora} onChange={e => setHora(e.target.value)} className="w-1/2 bg-surface rounded-md px-4 py-4 outline-none focus:ring-1 ring-primary border border-divider font-normal" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <input type="date" required value={fecha} onChange={e => setFecha(e.target.value)} className="w-full bg-surface rounded-md px-4 py-3 outline-none focus:ring-1 ring-primary border border-divider font-normal" />
+              <input type="time" required value={hora} onChange={e => setHora(e.target.value)} className="w-full bg-surface rounded-md px-4 py-3 outline-none focus:ring-1 ring-primary border border-divider font-normal" />
             </div>
           </div>
 
@@ -476,7 +476,8 @@ export const EgresosPage = () => {
 
           {detalles.length > 0 && (
             <div className="border border-primary/20 rounded-md overflow-hidden mb-6 relative z-10 bg-card">
-              <table className="w-full text-left text-sm">
+              <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm min-w-[500px]">
                 <thead className="bg-[#BC2F32]/5 border-b border-[#BC2F32]/15 text-[#BC2F32]">
                   <tr>
                     <th className="p-3 text-xs uppercase tracking-wider font-semibold">Merceología</th>
@@ -547,6 +548,7 @@ export const EgresosPage = () => {
                   );})}
                 </tbody>
               </table>
+              </div>
             </div>
           )}
 

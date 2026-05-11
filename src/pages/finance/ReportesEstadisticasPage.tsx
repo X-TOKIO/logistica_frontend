@@ -613,7 +613,7 @@ export const ReportesEstadisticasPage = () => {
             className="flex flex-col gap-4"
           >
             {/* Tab header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h3 className="text-base font-semibold text-gray-900 dark:text-white">Inventario & Stock</h3>
                 <p className="text-xs text-gray-500 dark:text-gray-400">Capital inmovilizado, stock crítico y mermas</p>
@@ -682,7 +682,7 @@ export const ReportesEstadisticasPage = () => {
               <div className={`${CARD} p-5`}>
                 <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Últimas Mermas Registradas</h4>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full min-w-[480px] text-sm">
                     <thead>
                       <tr className="border-b border-gray-200 dark:border-white/[0.07]">
                         {['Motivo','Cantidad','Costo (Bs.)','Fecha'].map(h => (
@@ -719,7 +719,7 @@ export const ReportesEstadisticasPage = () => {
             exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.22 }}
             className="flex flex-col gap-4"
           >
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h3 className="text-base font-semibold text-gray-900 dark:text-white">Finanzas & Pagos</h3>
                 <p className="text-xs text-gray-500 dark:text-gray-400">Ingresos vs. egresos y alertas de vencimientos</p>
@@ -821,7 +821,7 @@ export const ReportesEstadisticasPage = () => {
                 <span className="ml-auto text-xs text-gray-400">{alertList.length} cuotas</span>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full min-w-[560px] text-sm">
                   <thead>
                     <tr className="border-b border-gray-200 dark:border-white/[0.07]">
                       {['Proveedor / Cuenta','Vencimiento','Días','Monto (Bs.)','Estado'].map(h => (
@@ -877,7 +877,7 @@ export const ReportesEstadisticasPage = () => {
             exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.22 }}
             className="flex flex-col gap-4"
           >
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h3 className="text-base font-semibold text-gray-900 dark:text-white">Logística & Rutas</h3>
                 <p className="text-xs text-gray-500 dark:text-gray-400">Despachos por sucursal y eficiencia operativa</p>
@@ -995,7 +995,7 @@ export const ReportesEstadisticasPage = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Host SMTP</label>
                       <input value={smtpHost} onChange={e => setSmtpHost(e.target.value)}

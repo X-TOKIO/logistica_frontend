@@ -203,7 +203,7 @@ const RolDetailModal = ({ rol, onClose, onEdit }: RolDetailProps) => {
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center gap-4 px-8 py-6 border-b border-divider">
+        <div className="flex items-center gap-4 px-4 sm:px-8 py-4 sm:py-6 border-b border-divider">
           <div className={`w-14 h-14 rounded-md flex items-center justify-center text-white font-black text-lg shadow-lg flex-shrink-0 ${avatarColor(rol.Nombre)}`}>
             {rol.Nombre.replace(/_/g, '').slice(0, 2).toUpperCase()}
           </div>
@@ -227,7 +227,7 @@ const RolDetailModal = ({ rol, onClose, onEdit }: RolDetailProps) => {
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto px-8 py-6 flex flex-col gap-5">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-4 sm:py-6 flex flex-col gap-5">
           {totalPerms === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 opacity-25">
               <Shield className="w-14 h-14 mb-3" />
@@ -263,7 +263,7 @@ const RolDetailModal = ({ rol, onClose, onEdit }: RolDetailProps) => {
         </div>
 
         {/* Footer */}
-        <div className="px-8 py-5 border-t border-divider flex items-center gap-3 bg-surface">
+        <div className="px-4 sm:px-8 py-4 sm:py-5 border-t border-divider flex items-center gap-3 bg-surface">
           {rol.Nombre === SYSTEM_ROLE ? (
             <span className="flex items-center gap-2 px-5 py-2.5 rounded-md text-xs font-black uppercase tracking-wider text-amber-500 bg-amber-500/10 border border-amber-500/20 cursor-default select-none">
               <Lock className="w-3.5 h-3.5" /> Rol de sistema protegido
@@ -445,7 +445,7 @@ export const SeguridadRolesPage = () => {
       {/* Header */}
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
-          <h2 className="text-4xl font-black text-primary drop-shadow-sm flex items-center gap-3">
+          <h2 className="text-2xl sm:text-4xl font-black text-primary drop-shadow-sm flex items-center gap-3">
             <ShieldCheck className="w-9 h-9 opacity-80" />
             Seguridad y Roles
           </h2>
@@ -463,7 +463,8 @@ export const SeguridadRolesPage = () => {
 
       {/* Roles table */}
       <div className="bg-card border border-divider rounded-md shadow-sm overflow-hidden">
-        <table className="w-full text-left">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[600px] text-left">
           <thead className="bg-surface border-b border-divider">
             <tr>
               <th className="px-6 py-4 text-[11px] font-black uppercase tracking-widest opacity-40 w-14" />
@@ -538,6 +539,7 @@ export const SeguridadRolesPage = () => {
           </tbody>
         </table>
 
+        </div>
         {roles.length === 0 && (
           <div className="flex flex-col items-center justify-center py-24 gap-3 opacity-30">
             <Shield className="w-14 h-14" />
@@ -573,7 +575,7 @@ export const SeguridadRolesPage = () => {
           >
             <ArrowLeft className="w-4 h-4" /> Volver
           </button>
-          <h2 className="text-3xl font-black text-primary">
+          <h2 className="text-xl sm:text-3xl font-black text-primary">
             {editingRol ? `Editar: ${editingRol.Nombre}` : 'Nuevo Rol'}
           </h2>
         </div>

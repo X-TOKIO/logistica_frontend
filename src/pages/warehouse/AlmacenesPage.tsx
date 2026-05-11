@@ -37,7 +37,7 @@ const EditAlmacenModal = ({ alm, onClose, onSaved }: { alm: Almacen; onClose: ()
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4" onClick={onClose}>
-      <div className="bg-card rounded-md w-full max-w-md shadow-2xl border border-divider p-8" onClick={e => e.stopPropagation()}>
+      <div className="bg-card rounded-md w-full max-w-md shadow-2xl border border-divider p-4 sm:p-8" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-black text-primary flex items-center gap-2"><Pencil className="w-5 h-5" /> Editar Almacén</h3>
           <button onClick={onClose} className="p-2 rounded-md hover:bg-surface opacity-40 hover:opacity-80 transition-all"><X className="w-4 h-4" /></button>
@@ -45,7 +45,7 @@ const EditAlmacenModal = ({ alm, onClose, onSaved }: { alm: Almacen; onClose: ()
         <form onSubmit={submit} className="flex flex-col gap-4">
           <input required value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Nombre del almacén" className={INPUT} />
           <input required value={direccion} onChange={e => setDireccion(e.target.value)} placeholder="Dirección física" className={INPUT} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <input type="number" step="any" value={latitud} onChange={e => setLatitud(e.target.value)} placeholder="Latitud (-17.764...)" className={INPUT} />
             <input type="number" step="any" value={longitud} onChange={e => setLongitud(e.target.value)} placeholder="Longitud (-63.204...)" className={INPUT} />
           </div>
@@ -86,7 +86,7 @@ const EditSucursalModal = ({ suc, onClose, onSaved }: { suc: Sucursal; onClose: 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4" onClick={onClose}>
-      <div className="bg-card rounded-md w-full max-w-md shadow-2xl border border-divider p-8" onClick={e => e.stopPropagation()}>
+      <div className="bg-card rounded-md w-full max-w-md shadow-2xl border border-divider p-4 sm:p-8" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-black text-primary flex items-center gap-2"><Pencil className="w-5 h-5" /> Editar Sucursal</h3>
           <button onClick={onClose} className="p-2 rounded-md hover:bg-surface opacity-40 hover:opacity-80 transition-all"><X className="w-4 h-4" /></button>
@@ -94,11 +94,11 @@ const EditSucursalModal = ({ suc, onClose, onSaved }: { suc: Sucursal; onClose: 
         <form onSubmit={submit} className="flex flex-col gap-4">
           <input required value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Nombre de sucursal" className={INPUT} />
           <input required value={direccion} onChange={e => setDireccion(e.target.value)} placeholder="Dirección física" className={INPUT} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <input value={telefono} onChange={e => setTelefono(e.target.value)} placeholder="Teléfono" className={INPUT} />
             <input required type="number" min="0" value={critico} onChange={e => setCritico(e.target.value)} placeholder="Stock crítico" className={INPUT} />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <input type="number" step="any" value={latitud} onChange={e => setLatitud(e.target.value)} placeholder="Latitud (-17.764...)" className={INPUT} />
             <input type="number" step="any" value={longitud} onChange={e => setLongitud(e.target.value)} placeholder="Longitud (-63.204...)" className={INPUT} />
           </div>
@@ -238,7 +238,7 @@ export const AlmacenesPage = () => {
 
       {/* Header */}
       <div>
-        <h2 className="text-4xl font-black text-primary drop-shadow-sm flex items-center gap-3">
+        <h2 className="text-2xl sm:text-4xl font-black text-primary drop-shadow-sm flex items-center gap-3">
           <Store className="w-10 h-10" /> Gestión de Ubicaciones
         </h2>
         <p className="mt-2 text-lg font-bold text-text opacity-70">
@@ -269,7 +269,7 @@ export const AlmacenesPage = () => {
 
         {/* Form panel — solo visible si puede editar */}
         {canEdit && (
-          <div className="lg:col-span-1 bg-card border border-divider rounded-md p-8 shadow-sm relative overflow-hidden h-max">
+          <div className="lg:col-span-1 bg-card border border-divider rounded-md p-4 sm:p-8 shadow-sm relative overflow-hidden h-max">
             <div className="absolute top-0 right-0 w-40 h-40 bg-secondary/20 blur-[60px] rounded-full pointer-events-none" />
             <h3 className="text-xl font-black text-text dark:text-gray-100 mb-6">
               {tab === 'almacenes' ? 'Nuevo Almacén' : 'Nueva Sucursal'}
@@ -279,7 +279,7 @@ export const AlmacenesPage = () => {
               <form onSubmit={handleCreateAlm} className="flex flex-col gap-4 relative z-10">
                 <input required value={almNombre} onChange={e => setAlmNombre(e.target.value)} placeholder="Nombre (Ej. Central Warnes)" className={INPUT} />
                 <input required value={almDireccion} onChange={e => setAlmDireccion(e.target.value)} placeholder="Dirección física" className={INPUT} />
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <input type="number" step="any" value={almLatitud} onChange={e => setAlmLatitud(e.target.value)} placeholder="Latitud (GPS)" className={INPUT} />
                   <input type="number" step="any" value={almLongitud} onChange={e => setAlmLongitud(e.target.value)} placeholder="Longitud (GPS)" className={INPUT} />
                 </div>
@@ -294,7 +294,7 @@ export const AlmacenesPage = () => {
               <form onSubmit={handleCreateSuc} className="flex flex-col gap-4 relative z-10">
                 <input required value={sucNombre} onChange={e => setSucNombre(e.target.value)} placeholder="Nombre (Ej. Sucursal Norte)" className={INPUT} />
                 <input required value={sucDireccion} onChange={e => setSucDireccion(e.target.value)} placeholder="Dirección física" className={INPUT} />
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <input value={sucTelefono} onChange={e => setSucTelefono(e.target.value)} placeholder="Teléfono" className={INPUT} />
                   <input required type="number" min="0" value={sucCritico} onChange={e => setSucCritico(e.target.value)} placeholder="Stock crítico" className={INPUT} />
                 </div>

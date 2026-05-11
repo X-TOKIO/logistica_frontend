@@ -232,23 +232,23 @@ export const MermasPage = () => {
 
     return (
         <div className="flex flex-col gap-6 w-full relative z-10 transition-all duration-300">
-            <div className="flex items-center justify-between">
-                <h2 className="text-4xl font-black text-orange-600 dark:text-orange-400 drop-shadow-sm flex items-center gap-3">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+                <h2 className="text-2xl sm:text-4xl font-black text-orange-600 dark:text-orange-400 drop-shadow-sm flex items-center gap-2">
                     Control: Merma / Descarte
                 </h2>
-                <button onClick={exportPDFGlobal} className="bg-orange-500/10 text-orange-500 px-4 py-2.5 rounded-md hover:bg-orange-500 hover:text-white transition-colors flex items-center gap-2 font-bold shadow-sm border border-orange-500/20">
-                    <Printer className="w-4 h-4" /> 🖨️ EXPORTAR PDF GLOBAL
+                <button onClick={exportPDFGlobal} className="bg-orange-500/10 text-orange-500 px-3 sm:px-4 py-2 sm:py-2.5 rounded-md hover:bg-orange-500 hover:text-white transition-colors flex items-center gap-2 font-bold shadow-sm border border-orange-500/20 text-sm">
+                    <Printer className="w-4 h-4" /> Exportar PDF
                 </button>
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-2">
-                <div className="bg-card border border-orange-500/20 rounded-md p-8 shadow-xl relative overflow-hidden h-max">
+                <div className="bg-card border border-orange-500/20 rounded-md p-4 sm:p-8 shadow-xl relative overflow-hidden h-max">
                     <div className="absolute top-0 right-0 w-60 h-60 bg-orange-500/10 blur-[80px] rounded-full pointer-events-none"></div>
                     <h3 className="text-2xl font-black text-text mb-6">Declaración de Baja</h3>
 
-                    <div className="flex gap-4 mb-4">
-                        <input type="date" required value={fecha} onChange={e => setFecha(e.target.value)} className="w-1/2 bg-surface rounded-md px-4 py-4 outline-none focus:ring-2 ring-orange-500 border border-divider font-medium" />
-                        <input type="time" required value={hora} onChange={e => setHora(e.target.value)} className="w-1/2 bg-surface rounded-md px-4 py-4 outline-none focus:ring-2 ring-orange-500 border border-divider font-medium" />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <input type="date" required value={fecha} onChange={e => setFecha(e.target.value)} className="w-full bg-surface rounded-md px-4 py-3 outline-none focus:ring-2 ring-orange-500 border border-divider font-medium" />
+                        <input type="time" required value={hora} onChange={e => setHora(e.target.value)} className="w-full bg-surface rounded-md px-4 py-3 outline-none focus:ring-2 ring-orange-500 border border-divider font-medium" />
                     </div>
                     <input
                         required
@@ -295,7 +295,8 @@ export const MermasPage = () => {
 
                     {detalles.length > 0 && (
                         <div className="border border-orange-500/20 rounded-md overflow-hidden mb-6 bg-card">
-                            <table className="w-full text-left text-sm">
+                            <div className="overflow-x-auto">
+                            <table className="w-full text-left text-sm min-w-[400px]">
                                 <thead className="bg-orange-500/10 text-orange-600 dark:text-orange-400">
                                     <tr>
                                         <th className="p-3 text-xs uppercase font-black">Producto</th>
@@ -323,6 +324,7 @@ export const MermasPage = () => {
                                     ))}
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     )}
 

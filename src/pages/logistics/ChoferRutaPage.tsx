@@ -505,7 +505,7 @@ export const ChoferRutaPage = () => {
     <div className="flex flex-col gap-4 w-full h-[88vh] relative z-10 transition-all duration-300">
 
       {/* Header */}
-      <div className="flex items-center justify-between bg-white/60 dark:bg-black/60 backdrop-blur-3xl border border-black/10 dark:border-white/10 rounded-3xl px-6 py-4 shadow-xl relative overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white/60 dark:bg-black/60 backdrop-blur-3xl border border-black/10 dark:border-white/10 rounded-3xl px-6 py-4 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-60 h-60 bg-green-500/10 blur-[100px] rounded-full pointer-events-none" />
         <div>
           <h2 className="text-2xl font-black text-primary flex items-center gap-3">
@@ -744,7 +744,7 @@ export const ChoferRutaPage = () => {
             </div>
           ) : (
             <div className="overflow-x-auto relative z-10">
-              <table className="w-full text-sm">
+              <table className="w-full min-w-[640px] text-sm">
                 <thead>
                   <tr className="border-b-2 border-black/10 dark:border-white/10">
                     {['Despacho', 'Ruta', 'Vehículo', 'Conductor', 'Salida', 'Entrega Est.', 'Estado'].map(h => (

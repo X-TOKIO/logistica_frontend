@@ -99,7 +99,7 @@ const EditModal = ({ user, roles, onClose, onSaved }: EditProps) => {
       <div className="bg-card rounded-3xl w-full max-w-lg shadow-2xl border border-divider overflow-hidden" onClick={e => e.stopPropagation()}>
 
         {/* Header */}
-        <div className="px-8 pt-7 pb-5 border-b border-black/8 dark:border-slate-700 bg-black/2 dark:bg-white/2 flex items-center justify-between">
+        <div className="px-4 sm:px-8 pt-5 sm:pt-7 pb-4 sm:pb-5 border-b border-black/8 dark:border-slate-700 bg-black/2 dark:bg-white/2 flex items-center justify-between">
           <div>
             <p className="text-[9px] font-black uppercase tracking-[0.2em] opacity-30 mb-0.5">Editar cuenta</p>
             <h3 className="text-lg font-black text-text dark:text-gray-100">@{user.UserName}</h3>
@@ -110,8 +110,8 @@ const EditModal = ({ user, roles, onClose, onSaved }: EditProps) => {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="px-8 py-6 flex flex-col gap-4">
-          <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="px-4 sm:px-8 py-4 sm:py-6 flex flex-col gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Nombre">
               <input value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Nombre" className={inputCls} />
             </Field>
@@ -198,7 +198,7 @@ const DetailModal = ({ user, onClose, onUnlock, onDeactivate }: DetailProps) => 
       <div className="bg-card rounded-3xl w-full max-w-md shadow-2xl border border-divider overflow-hidden" onClick={e => e.stopPropagation()}>
 
         {/* Header */}
-        <div className="relative px-8 pt-8 pb-6 border-b border-black/8 dark:border-slate-700 bg-black/2 dark:bg-white/2">
+        <div className="relative px-4 sm:px-8 pt-4 sm:pt-8 pb-4 sm:pb-6 border-b border-black/8 dark:border-slate-700 bg-black/2 dark:bg-white/2">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-white text-xl font-black shadow-lg flex-shrink-0">
               {initials}
@@ -215,7 +215,7 @@ const DetailModal = ({ user, onClose, onUnlock, onDeactivate }: DetailProps) => 
         </div>
 
         {/* Body */}
-        <div className="px-8 py-6 grid grid-cols-2 gap-5">
+        <div className="px-4 sm:px-8 py-4 sm:py-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div className="col-span-2">
             <Field label="Empleado" value={fullName || '—'} />
           </div>
@@ -237,7 +237,7 @@ const DetailModal = ({ user, onClose, onUnlock, onDeactivate }: DetailProps) => 
         </div>
 
         {/* Footer */}
-        <div className="px-8 py-5 border-t border-black/8 dark:border-slate-700 flex items-center gap-3 bg-black/2 dark:bg-white/2 flex-wrap">
+        <div className="px-4 sm:px-8 py-4 sm:py-5 border-t border-black/8 dark:border-slate-700 flex items-center gap-3 bg-black/2 dark:bg-white/2 flex-wrap">
           {isBlocked && (
             <button
               onClick={() => { onClose(); onUnlock(user); }}
@@ -356,9 +356,9 @@ export const UsuariosPage = () => {
     <div className="flex flex-col gap-6 w-full relative z-10">
 
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-4xl font-black text-primary drop-shadow-sm flex items-center gap-3">
+          <h2 className="text-2xl sm:text-4xl font-black text-primary drop-shadow-sm flex items-center gap-3">
             <UserCog className="w-10 h-10" /> Gestión de Usuarios
           </h2>
           <p className="mt-2 text-lg font-bold text-text opacity-70">
@@ -391,7 +391,7 @@ export const UsuariosPage = () => {
       )}
 
       {/* Table card */}
-      <div className="bg-white/40 dark:bg-black/40 backdrop-blur-3xl border border-black/10 dark:border-slate-700 rounded-[2rem] p-8 shadow-2xl">
+      <div className="bg-white/40 dark:bg-black/40 backdrop-blur-3xl border border-black/10 dark:border-slate-700 rounded-[2rem] p-4 sm:p-8 shadow-2xl">
 
         {/* Search */}
         <div className="flex items-center bg-surface border border-divider rounded-xl px-4 py-3 mb-6 focus-within:border-primary transition-all">
@@ -404,7 +404,8 @@ export const UsuariosPage = () => {
           />
         </div>
 
-        <table className="w-full text-left text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[700px] text-left text-sm">
           <thead className="bg-card border-b border-divider">
             <tr>
               <th className="p-4 font-black text-xs tracking-wider uppercase text-muted">Usuario</th>
@@ -494,6 +495,7 @@ export const UsuariosPage = () => {
           </tbody>
         </table>
 
+        </div>
         {filtered.length === 0 && !loading && (
           <div className="flex flex-col items-center justify-center py-16 gap-3 opacity-25">
             <UserCog className="w-12 h-12" />

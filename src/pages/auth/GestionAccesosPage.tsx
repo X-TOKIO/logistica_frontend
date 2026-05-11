@@ -262,8 +262,8 @@ const TabAsignar = ({ permisos, roles }: { permisos: any[]; roles: any[] }) => {
         {/* Tabla Matriz */}
         <div className={`bg-white/40 dark:bg-[#0B0D14]/80 backdrop-blur-3xl border border-black/10 dark:border-slate-700 rounded-[2rem] p-6 shadow-2xl flex-1 flex flex-col transition-all duration-500 ${!selectedUser ? 'opacity-30 pointer-events-none grayscale' : ''}`}>
           <h3 className="text-lg font-black text-text dark:text-gray-200 mb-4">Matriz Activa en BD</h3>
-          <div className="bg-background dark:bg-slate-800 rounded-2xl overflow-hidden border border-black/10 dark:border-slate-700 max-h-80 overflow-y-auto">
-            <table className="w-full text-left text-sm">
+          <div className="bg-background dark:bg-slate-800 rounded-2xl overflow-x-auto border border-black/10 dark:border-slate-700 max-h-80 overflow-y-auto">
+            <table className="w-full min-w-[400px] text-left text-sm">
               <thead className="bg-black/5 dark:bg-slate-700/50 border-b border-black/10 dark:border-slate-700 sticky top-0 backdrop-blur-sm">
                 <tr>
                   <th className="p-3 font-black uppercase text-xs">Rol</th>
@@ -371,7 +371,7 @@ const TabRoles = ({ permisos, roles, onRolesChange }: { permisos: any[]; roles: 
     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
       {/* Tabla de Roles */}
       <div className="bg-white/40 dark:bg-[#0B0D14]/80 backdrop-blur-3xl border border-black/10 dark:border-slate-700 rounded-[2rem] p-6 shadow-2xl flex flex-col gap-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="text-lg font-black text-text dark:text-gray-200">Catálogo de Roles</h3>
           <button
             onClick={openCreate}
@@ -381,8 +381,8 @@ const TabRoles = ({ permisos, roles, onRolesChange }: { permisos: any[]; roles: 
           </button>
         </div>
 
-        <div className="bg-background dark:bg-slate-800 rounded-2xl overflow-hidden border border-black/10 dark:border-slate-700">
-          <table className="w-full text-left text-sm">
+        <div className="bg-background dark:bg-slate-800 rounded-2xl overflow-x-auto border border-black/10 dark:border-slate-700">
+          <table className="w-full min-w-[480px] text-left text-sm">
               <thead className="bg-black/5 dark:bg-slate-700/50 border-b border-black/10 dark:border-slate-700">
               <tr>
                 <th className="p-3 font-black uppercase text-xs">Nombre</th>
@@ -536,10 +536,10 @@ export const GestionAccesosPage = () => {
 
   return (
     <div className="flex flex-col gap-6 w-full relative z-10">
-      <h2 className="text-4xl font-black text-primary drop-shadow-sm">Seguridad y Gestión de Accesos</h2>
+      <h2 className="text-2xl sm:text-4xl font-black text-primary drop-shadow-sm">Seguridad y Gestión de Accesos</h2>
 
       {/* Tabs */}
-      <div className="flex gap-3 bg-black/5 dark:bg-white/5 p-1.5 rounded-2xl w-fit border border-black/10 dark:border-white/10">
+      <div className="flex flex-wrap gap-3 bg-black/5 dark:bg-white/5 p-1.5 rounded-2xl w-fit border border-black/10 dark:border-white/10">
         {tabBtn('asignar', '👤 Asignar Accesos')}
         {tabBtn('roles', '🛡️ Gestión de Roles')}
       </div>

@@ -551,10 +551,10 @@ export const ProcesarPagoPage = () => {
       </div>
 
       {/* ── Contenido Principal ────────────────────────────────────────────── */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
 
         {/* ── Columna Izquierda — Resumen + Historial ──────────────────────── */}
-        <div className="w-[40%] border-r border-slate-200 dark:border-[#2a2a2a] flex flex-col overflow-y-auto">
+        <div className="md:w-[40%] border-b md:border-b-0 md:border-r border-slate-200 dark:border-[#2a2a2a] flex flex-col overflow-y-auto">
 
           {/* Tarjeta de deuda */}
           <div className="m-5 rounded-2xl bg-white dark:bg-[#1a1a1a] border border-slate-200 dark:border-[#2a2a2a] p-5">
@@ -755,7 +755,7 @@ export const ProcesarPagoPage = () => {
               {/* ── Panel EFECTIVO ───────────────────────────────────────── */}
               {metodo === 'EFECTIVO' && (
                 <form onSubmit={handleEfectivoSubmit} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/30 mb-2">
                         Fecha de Pago

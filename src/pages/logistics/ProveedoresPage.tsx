@@ -75,8 +75,8 @@ export const ProveedoresPage = () => {
     <div className="flex flex-col gap-6 w-full relative z-10">
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-4xl font-black text-amber-500 dark:text-amber-400 drop-shadow-sm flex items-center gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-2xl sm:text-4xl font-black text-amber-500 dark:text-amber-400 drop-shadow-sm flex items-center gap-3">
           <Building2 className="w-9 h-9" /> Gestión de Proveedores
         </h2>
         <button
@@ -90,7 +90,7 @@ export const ProveedoresPage = () => {
       {/* Table */}
       <div className="bg-white/60 dark:bg-black/60 backdrop-blur-3xl border border-black/10 dark:border-white/10 rounded-[2rem] shadow-2xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left">
+          <table className="w-full min-w-[600px] text-left">
             <thead className="bg-amber-500/10 border-b border-amber-500/20">
               <tr>
                 {['ID', 'Nombre / Razón Social', 'NIT', 'Teléfono', 'Dirección', 'Estado', 'Acciones'].map(h => (
@@ -134,7 +134,7 @@ export const ProveedoresPage = () => {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-background border border-black/10 dark:border-white/10 rounded-[2rem] p-8 w-full max-w-lg shadow-2xl flex flex-col gap-5 relative">
+          <div className="bg-background border border-black/10 dark:border-white/10 rounded-[2rem] p-4 sm:p-8 w-full max-w-lg shadow-2xl flex flex-col gap-5 relative">
             <button onClick={() => setShowModal(false)} className="absolute top-5 right-5 text-text opacity-40 hover:opacity-100 transition-opacity">
               <X className="w-5 h-5" />
             </button>

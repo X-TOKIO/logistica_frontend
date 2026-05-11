@@ -277,7 +277,7 @@ export const AsignacionDespachosPage = () => {
 
   return (
     <div className="flex flex-col gap-6 w-full relative z-10 transition-all duration-300">
-      <h2 className="text-4xl font-black text-primary drop-shadow-sm flex items-center gap-3">
+      <h2 className="text-2xl sm:text-4xl font-black text-primary drop-shadow-sm flex items-center gap-3">
         <Truck className="w-9 h-9" /> Centro de Asignación de Despacho
       </h2>
 
@@ -311,7 +311,7 @@ export const AsignacionDespachosPage = () => {
 
       {/* ── PENDIENTES ── */}
       {view === 'pendientes' && (
-        <div className="bg-card border border-divider rounded-[2rem] p-8 shadow-2xl relative overflow-hidden">
+        <div className="bg-card border border-divider rounded-[2rem] p-4 sm:p-8 shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-80 h-80 bg-primary/10 blur-[100px] rounded-full pointer-events-none" />
           <h3 className="text-2xl font-black text-text mb-6">Egresos Pendientes de Transporte</h3>
 
@@ -327,7 +327,7 @@ export const AsignacionDespachosPage = () => {
             </div>
           ) : (
             <div className="overflow-x-auto relative z-10">
-              <table className="w-full text-sm">
+              <table className="w-full min-w-[500px] text-sm">
                 <thead className="bg-card border-b border-divider">
                   <tr>
                     <th className="p-4 text-left text-muted uppercase text-xs font-black tracking-wider">Egreso</th>
@@ -376,7 +376,7 @@ export const AsignacionDespachosPage = () => {
 
       {/* ── HISTORIAL ── */}
       {view === 'historial' && (
-        <div className="bg-card border border-divider rounded-[2rem] p-8 shadow-2xl relative overflow-hidden">
+        <div className="bg-card border border-divider rounded-[2rem] p-4 sm:p-8 shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-80 h-80 bg-secondary/10 blur-[100px] rounded-full pointer-events-none" />
           <h3 className="text-2xl font-black text-text mb-6 flex items-center gap-3">
             <History className="w-6 h-6 text-secondary" /> Historial de Despachos Asignados
@@ -394,7 +394,7 @@ export const AsignacionDespachosPage = () => {
             </div>
           ) : (
             <div className="overflow-x-auto relative z-10">
-              <table className="w-full text-sm">
+              <table className="w-full min-w-[700px] text-sm">
                 <thead className="bg-card border-b border-divider">
                   <tr>
                     <th className="py-3 px-4 text-left text-muted uppercase text-xs font-black tracking-wider">Despacho</th>
@@ -484,7 +484,7 @@ export const AsignacionDespachosPage = () => {
             onClick={e => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="px-8 pt-7 pb-5 border-b border-divider flex items-center justify-between">
+            <div className="px-4 sm:px-8 pt-7 pb-5 border-b border-divider flex items-center justify-between">
               <div>
                 <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted mb-0.5">Asignar Transporte</p>
                 <h3 className="text-lg font-black text-text font-mono">
@@ -503,7 +503,7 @@ export const AsignacionDespachosPage = () => {
             </div>
 
             {/* Form */}
-            <div className="px-8 py-6 flex flex-col gap-4">
+            <div className="px-4 sm:px-8 py-4 sm:py-6 flex flex-col gap-4">
 
               {/* Ruta */}
               <div className="flex flex-col gap-1.5">
@@ -587,7 +587,7 @@ export const AsignacionDespachosPage = () => {
               </div>
 
               {/* Fechas */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted flex items-center gap-1">
                     <Calendar className="w-3 h-3" /> Salida
@@ -614,7 +614,7 @@ export const AsignacionDespachosPage = () => {
             </div>
 
             {/* Actions */}
-            <div className="px-8 py-5 border-t border-divider flex items-center justify-end gap-3">
+            <div className="px-4 sm:px-8 py-5 border-t border-divider flex items-center justify-end gap-3">
               <button
                 type="button"
                 onClick={() => setAssigningEgreso(null)}

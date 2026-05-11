@@ -27,7 +27,7 @@ const EditCatModal = ({ cat, onClose, onSaved }: { cat: Categoria; onClose: () =
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4" onClick={onClose}>
-      <div className="bg-background dark:bg-[#0B0D14] rounded-3xl w-full max-w-md shadow-2xl border border-black/10 dark:border-slate-700 p-8" onClick={e => e.stopPropagation()}>
+      <div className="bg-background dark:bg-[#0B0D14] rounded-3xl w-full max-w-md shadow-2xl border border-black/10 dark:border-slate-700 p-4 sm:p-8" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-black text-blue-500 flex items-center gap-2"><Pencil className="w-5 h-5" /> Editar Categoría</h3>
           <button onClick={onClose} className="p-2 rounded-xl hover:bg-black/8 dark:hover:bg-white/8 opacity-40 hover:opacity-80 transition-all"><X className="w-4 h-4" /></button>
@@ -61,14 +61,14 @@ const EditMedModal = ({ med, onClose, onSaved }: { med: UMedida; onClose: () => 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4" onClick={onClose}>
-      <div className="bg-background dark:bg-[#0B0D14] rounded-3xl w-full max-w-md shadow-2xl border border-black/10 dark:border-slate-700 p-8" onClick={e => e.stopPropagation()}>
+      <div className="bg-background dark:bg-[#0B0D14] rounded-3xl w-full max-w-md shadow-2xl border border-black/10 dark:border-slate-700 p-4 sm:p-8" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-black text-blue-500 flex items-center gap-2"><Pencil className="w-5 h-5" /> Editar Unidad</h3>
           <button onClick={onClose} className="p-2 rounded-xl hover:bg-black/8 dark:hover:bg-white/8 opacity-40 hover:opacity-80 transition-all"><X className="w-4 h-4" /></button>
         </div>
         <form onSubmit={submit} className="flex flex-col gap-4">
           <input required value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Nombre (Ej. Caja)" className={INPUT} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <input required value={abrev} onChange={e => setAbrev(e.target.value)} placeholder="Abrev. (Ej. Cja)" className={INPUT} />
             <input required type="text" value={unidadesBulto} onChange={e => setUnidadesBulto(e.target.value)} placeholder="Uds/Bulto (ej: 1x12)" className={INPUT} />
           </div>
@@ -143,7 +143,7 @@ export const CategoriasPage = () => {
     <div className="flex flex-col gap-6 w-full relative z-10 transition-all duration-300">
 
       <div>
-        <h2 className="text-4xl font-black text-primary drop-shadow-sm flex items-center gap-3">
+        <h2 className="text-2xl sm:text-4xl font-black text-primary drop-shadow-sm flex items-center gap-3">
           <Tags className="w-10 h-10" /> Maestros del Catálogo
         </h2>
         <p className="mt-2 text-lg font-bold text-text opacity-70">Categorías y unidades de medida del inventario.</p>
@@ -162,7 +162,7 @@ export const CategoriasPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-2">
 
         {/* Form panel */}
-        <div className="lg:col-span-1 bg-white/60 dark:bg-black/60 backdrop-blur-3xl border border-black/10 dark:border-slate-700 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden h-max">
+        <div className="lg:col-span-1 bg-white/60 dark:bg-black/60 backdrop-blur-3xl border border-black/10 dark:border-slate-700 rounded-[2rem] p-4 sm:p-8 shadow-2xl relative overflow-hidden h-max">
           <div className="absolute top-0 right-0 w-40 h-40 bg-secondary/20 blur-[60px] rounded-full pointer-events-none" />
           <h3 className="text-xl font-black text-text dark:text-gray-100 mb-6">
             {tab === 'categorias' ? 'Nueva Categoría' : 'Nueva Unidad'}
@@ -179,7 +179,7 @@ export const CategoriasPage = () => {
           ) : (
             <form onSubmit={handleCreateMed} className="flex flex-col gap-4 relative z-10">
               <input required value={medName} onChange={e => setMedName(e.target.value)} placeholder="Nombre (Ej. Caja, Chipa)" className={INPUT} />
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <input required value={medAbrev} onChange={e => setMedAbrev(e.target.value)} placeholder="Abrev. (Ej. Cja)" className={INPUT} />
                 <input required type="text" value={medUnidadesBulto} onChange={e => setMedUnidadesBulto(e.target.value)} placeholder="Uds/Bulto (ej: 1x12)" className={INPUT} />
               </div>
@@ -194,7 +194,8 @@ export const CategoriasPage = () => {
         {/* Table */}
         <div className="lg:col-span-2 bg-white/40 dark:bg-black/40 backdrop-blur-3xl border border-black/10 dark:border-slate-700 rounded-[2rem] shadow-2xl overflow-hidden">
           {tab === 'categorias' ? (
-            <table className="w-full text-left text-sm">
+            <div className="overflow-x-auto">
+            <table className="w-full min-w-[480px] text-left text-sm">
               <thead className="bg-black/5 dark:bg-slate-800 border-b border-black/10 dark:border-slate-700">
                 <tr>
                   <th className="p-4 font-black text-xs tracking-wider uppercase text-text dark:text-gray-200">ID</th>
@@ -219,8 +220,10 @@ export const CategoriasPage = () => {
                 ))}
               </tbody>
             </table>
+            </div>
           ) : (
-            <table className="w-full text-left text-sm">
+            <div className="overflow-x-auto">
+            <table className="w-full min-w-[540px] text-left text-sm">
               <thead className="bg-black/5 dark:bg-slate-800 border-b border-black/10 dark:border-slate-700">
                 <tr>
                   <th className="p-4 font-black text-xs tracking-wider uppercase text-text dark:text-gray-200">ID</th>
@@ -247,6 +250,7 @@ export const CategoriasPage = () => {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
 
           {((tab === 'categorias' && categorias.length === 0) || (tab === 'medidas' && medidas.length === 0)) && (

@@ -121,8 +121,8 @@ export const RutasPage = () => {
     <div className="flex flex-col gap-6 w-full relative z-10">
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-4xl font-black text-violet-500 dark:text-violet-400 drop-shadow-sm flex items-center gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-2xl sm:text-4xl font-black text-violet-500 dark:text-violet-400 drop-shadow-sm flex items-center gap-3">
           <MapPinned className="w-9 h-9" /> Gestión de Rutas
         </h2>
         <button
@@ -136,7 +136,7 @@ export const RutasPage = () => {
       {/* Table */}
       <div className="bg-white/60 dark:bg-black/60 backdrop-blur-3xl border border-black/10 dark:border-white/10 rounded-[2rem] shadow-2xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left">
+          <table className="w-full min-w-[700px] text-left">
             <thead className="bg-violet-500/10 border-b border-violet-500/20">
               <tr>
                 {['ID','Nombre de Ruta','Origen','Destino','Distancia (km)','T. Estimado','GPS','Acciones'].map(h => (
@@ -187,7 +187,7 @@ export const RutasPage = () => {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-background border border-black/10 dark:border-white/10 rounded-[2rem] p-8 w-full max-w-lg shadow-2xl flex flex-col gap-5 relative">
+          <div className="bg-background border border-black/10 dark:border-white/10 rounded-[2rem] p-4 sm:p-8 w-full max-w-lg shadow-2xl flex flex-col gap-5 relative">
             <button onClick={() => setShowModal(false)} className="absolute top-5 right-5 text-text opacity-40 hover:opacity-100 transition-opacity">
               <X className="w-5 h-5" />
             </button>
@@ -255,20 +255,20 @@ export const RutasPage = () => {
                 </button>
               )}
 
-              <div className="flex gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <input
                   type="number"
                   placeholder="Distancia real (km)"
                   value={form.Distancia_KM}
                   onChange={e => setForm(f => ({ ...f, Distancia_KM: e.target.value }))}
-                  className="w-1/2 bg-black/5 dark:bg-white/5 rounded-xl px-4 py-3.5 outline-none focus:ring-2 ring-violet-500 font-medium"
+                  className="w-full bg-black/5 dark:bg-white/5 rounded-xl px-4 py-3.5 outline-none focus:ring-2 ring-violet-500 font-medium"
                 />
                 <input
                   type="number"
                   placeholder="Tiempo estimado (h)"
                   value={form.Tiempo_Estimado_Horas}
                   onChange={e => setForm(f => ({ ...f, Tiempo_Estimado_Horas: e.target.value }))}
-                  className="w-1/2 bg-black/5 dark:bg-white/5 rounded-xl px-4 py-3.5 outline-none focus:ring-2 ring-violet-500 font-medium"
+                  className="w-full bg-black/5 dark:bg-white/5 rounded-xl px-4 py-3.5 outline-none focus:ring-2 ring-violet-500 font-medium"
                 />
               </div>
 

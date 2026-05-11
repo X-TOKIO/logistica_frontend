@@ -147,7 +147,7 @@ const ModalHistorial = ({ cuenta, onClose }: ModalHistorialProps) => {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full min-w-[500px] text-sm">
                 <thead>
                   <tr className="border-b border-slate-200 dark:border-white/10">
                     {['Fecha', 'Método', 'Referencia', 'Registrado por', 'Monto'].map(col => (
@@ -429,7 +429,7 @@ export const CuentasPorPagarPage = () => {
     <div className="p-6 space-y-6">
 
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-black text-text tracking-wide">Cuentas por Pagar</h1>
           <p className="text-sm text-text/50 mt-0.5">Control de obligaciones financieras pendientes</p>
@@ -500,7 +500,7 @@ export const CuentasPorPagarPage = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[700px] text-sm">
               <thead>
                 <tr className="bg-black/5 dark:bg-white/5">
                   {['ID CxP', 'Proveedor', 'Fecha Emisión', 'Fecha Vencimiento', 'Deuda Original', 'Saldo Pendiente', 'Estado', 'Acciones'].map(col => (

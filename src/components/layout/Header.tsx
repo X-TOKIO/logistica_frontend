@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   Search, Sun, Moon, X, Eye, EyeOff,
   UserRound, Mail, ShieldCheck, Lock, RefreshCw, Check,
-  Settings, ArrowLeft,
+  Settings, ArrowLeft, Menu,
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
@@ -362,9 +362,10 @@ const UserWidget = () => {
 
 // ── Header ─────────────────────────────────────────────────────────────────
 
-export const Header = () => {
+export const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
   const { theme, setTheme, mode, setMode } = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchOpen, setSearchOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -391,11 +392,20 @@ export const Header = () => {
   };
 
   return (
-    <header className="h-16 fixed top-0 right-0 left-64 bg-background/95 backdrop-blur-md border-b border-divider z-10 flex items-center justify-between px-6 transition-colors duration-300">
+    <header className="h-14 sm:h-16 fixed top-0 right-0 left-0 md:left-64 bg-background/95 backdrop-blur-md border-b border-divider z-10 flex items-center justify-between px-3 sm:px-6 gap-2 transition-colors duration-300">
 
-      {/* Search */}
-      <div className="flex items-center bg-surface rounded-md px-4 py-2.5 w-[440px] border border-divider focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
-        <Search className="h-5 w-5 text-primary" />
+      {/* Hamburger — solo móvil */}
+      <button
+        onClick={onMenuClick}
+        className="md:hidden flex-shrink-0 p-2 rounded-md hover:bg-black/5 dark:hover:bg-white/5 transition"
+        aria-label="Abrir menú"
+      >
+        <Menu className="h-5 w-5 text-text" />
+      </button>
+
+      {/* Search — desktop siempre visible, móvil como overlay */}
+      <div className="hidden sm:flex items-center bg-surface rounded-md px-4 py-2.5 flex-1 max-w-[440px] border border-divider focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+        <Search className="h-5 w-5 text-primary flex-shrink-0" />
         <input
           type="text"
           placeholder="Buscador global: Enter para buscar Productos..."
@@ -406,20 +416,57 @@ export const Header = () => {
         />
       </div>
 
+      {/* Search expandible móvil */}
+      <AnimatePresence>
+        {searchOpen && (
+          <motion.div
+            initial={{ opacity: 0, scaleX: 0.9 }}
+            animate={{ opacity: 1, scaleX: 1 }}
+            exit={{ opacity: 0, scaleX: 0.9 }}
+            className="sm:hidden absolute top-0 left-0 right-0 h-14 bg-background/98 backdrop-blur-md border-b border-divider flex items-center px-3 gap-2 z-20"
+          >
+            <Search className="h-5 w-5 text-primary flex-shrink-0" />
+            <input
+              autoFocus
+              type="text"
+              placeholder="Buscar productos..."
+              className="bg-transparent border-none outline-none flex-1 text-sm text-text font-bold placeholder-gray-500"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              onKeyDown={e => { handleSearch(e); if (e.key === 'Enter') setSearchOpen(false); }}
+            />
+            <button onClick={() => { setSearchOpen(false); setSearchTerm(''); }}>
+              <X className="h-4 w-4 text-muted" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Spacer móvil */}
+      <div className="sm:hidden flex-1" />
+
+      {/* Search icon móvil */}
+      <button
+        onClick={() => setSearchOpen(true)}
+        className="sm:hidden p-2 rounded-md hover:bg-black/5 dark:hover:bg-white/5 transition"
+      >
+        <Search className="h-5 w-5 text-primary" />
+      </button>
+
       {/* Right controls */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1 sm:gap-3 flex-shrink-0">
         <UserWidget />
 
-        <div className="w-px h-6 bg-divider" />
+        <div className="hidden sm:block w-px h-6 bg-divider" />
 
         <select
-          className="bg-primary/10 text-primary border-none rounded-md px-3 py-1 font-semibold outline-none cursor-pointer"
+          className="hidden sm:block bg-primary/10 text-primary border-none rounded-md px-2 sm:px-3 py-1 font-semibold outline-none cursor-pointer text-xs sm:text-sm"
           value={theme}
           onChange={e => setTheme(e.target.value as any)}
         >
-          <option value="ninos">Tema: Niños</option>
-          <option value="jovenes">Tema: Jóvenes</option>
-          <option value="adultos">Tema: Adultos</option>
+          <option value="ninos">Niños</option>
+          <option value="jovenes">Jóvenes</option>
+          <option value="adultos">Adultos</option>
         </select>
 
         <button

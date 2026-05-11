@@ -42,7 +42,7 @@ const EmpDetailModal = ({ emp, onClose, onEdit }: EmpDetailProps) => {
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="relative px-8 pt-8 pb-6 border-b border-black/8 dark:border-slate-700 bg-black/2 dark:bg-white/2">
+        <div className="relative px-4 sm:px-8 pt-4 sm:pt-8 pb-4 sm:pb-6 border-b border-black/8 dark:border-slate-700 bg-black/2 dark:bg-white/2">
           <div className="absolute -top-8 -right-8 w-40 h-40 bg-primary/8 blur-[60px] rounded-full pointer-events-none" />
           <div className="flex items-center gap-4 relative z-10">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-white text-xl font-black shadow-lg flex-shrink-0">
@@ -65,7 +65,7 @@ const EmpDetailModal = ({ emp, onClose, onEdit }: EmpDetailProps) => {
         </div>
 
         {/* Body */}
-        <div className="px-8 py-6 grid grid-cols-2 gap-5">
+        <div className="px-4 sm:px-8 py-4 sm:py-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div className="col-span-2">
             <Field icon={<CreditCard className="w-3 h-3 inline" />} label="CI / Documento" value={emp.CI} />
           </div>
@@ -80,7 +80,7 @@ const EmpDetailModal = ({ emp, onClose, onEdit }: EmpDetailProps) => {
         </div>
 
         {/* Footer */}
-        <div className="px-8 py-5 border-t border-black/8 dark:border-slate-700 flex items-center gap-3 bg-black/2 dark:bg-white/2">
+        <div className="px-4 sm:px-8 py-4 sm:py-5 border-t border-black/8 dark:border-slate-700 flex items-center gap-3 bg-black/2 dark:bg-white/2">
           <button
             onClick={() => { onClose(); onEdit(emp); }}
             className="flex items-center gap-2 bg-blue-500/10 hover:bg-blue-500 text-blue-500 hover:text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all"
@@ -286,9 +286,9 @@ export const EmpleadosPage = () => {
         <div className="flex flex-col gap-6 w-full relative z-10 transition-all duration-300">
 
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                    <h2 className="text-4xl font-black text-primary drop-shadow-sm flex items-center gap-3">
+                    <h2 className="text-2xl sm:text-4xl font-black text-primary drop-shadow-sm flex items-center gap-3">
                         <Users className="w-10 h-10" /> Recursos Humanos
                     </h2>
                     <p className="mt-2 text-lg font-bold text-text opacity-70">
@@ -304,7 +304,7 @@ export const EmpleadosPage = () => {
             </div>
 
             {/* Employee table */}
-            <div className="bg-white/40 dark:bg-black/40 backdrop-blur-3xl border border-black/10 dark:border-slate-700 rounded-[2rem] p-8 shadow-2xl mt-4">
+            <div className="bg-white/40 dark:bg-black/40 backdrop-blur-3xl border border-black/10 dark:border-slate-700 rounded-[2rem] p-4 sm:p-8 shadow-2xl mt-4">
                 <div className="flex items-center bg-surface border border-divider rounded-xl px-4 py-3 mb-6 focus-within:border-primary transition-all">
                     <Search className="w-5 h-5 text-primary opacity-60 mr-2" />
                     <input
@@ -315,7 +315,8 @@ export const EmpleadosPage = () => {
                     />
                 </div>
 
-                <table className="w-full text-left text-sm mt-4">
+                <div className="overflow-x-auto">
+                <table className="w-full min-w-[600px] text-left text-sm mt-4">
                     <thead className="bg-card border-b border-divider">
                         <tr>
                             <th className="p-4 font-black text-xs tracking-wider uppercase text-muted">Identidad (CI)</th>
@@ -368,6 +369,7 @@ export const EmpleadosPage = () => {
                     </tbody>
                 </table>
 
+                </div>
                 {displayEmp.length === 0 && (
                     <div className="flex flex-col items-center justify-center py-16 gap-3 opacity-25">
                         <Users className="w-12 h-12" />
@@ -388,7 +390,7 @@ export const EmpleadosPage = () => {
             {/* ── Create / Edit Modal Stepper ── */}
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 dark:bg-black/80 backdrop-blur-md p-4">
-                    <div className="bg-card rounded-3xl p-8 max-w-2xl w-full shadow-2xl relative border border-divider">
+                    <div className="bg-card rounded-3xl p-4 sm:p-8 max-w-2xl w-full shadow-2xl relative border border-divider">
 
                         {/* ── Edit mode: single-step ── */}
                         {isEditing ? (
@@ -400,7 +402,7 @@ export const EmpleadosPage = () => {
                                     <p className="opacity-50 font-bold text-sm dark:text-gray-400">Modifica los datos físicos del empleado</p>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <input required placeholder="Nombres" value={fNombre} onChange={e => setfNombre(e.target.value)} className={INPUT} />
                                     <input required placeholder="CI Documento" value={fCI} onChange={e => setfCI(e.target.value)} className={`${INPUT} font-mono`} />
                                     <input required placeholder="Paterno" value={fPaterno} onChange={e => setfPaterno(e.target.value)} className={INPUT} />
@@ -447,7 +449,7 @@ export const EmpleadosPage = () => {
                                             <p className="opacity-50 font-bold text-sm dark:text-gray-400">Paso 1 — Ficha Operativa</p>
                                         </div>
 
-                                        <div className="grid grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <input required placeholder="Nombres" value={fNombre} onChange={e => setfNombre(e.target.value)} className={INPUT} />
                                             <input required placeholder="CI Documento" value={fCI} onChange={e => setfCI(e.target.value)} className={`${INPUT} font-mono`} />
                                             <input required placeholder="Paterno" value={fPaterno} onChange={e => setfPaterno(e.target.value)} className={INPUT} />

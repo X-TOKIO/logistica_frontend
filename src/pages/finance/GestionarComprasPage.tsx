@@ -1003,13 +1003,13 @@ export const GestionarComprasPage = () => {
           <ShoppingBag className="w-7 h-7 text-emerald-500" />
         </div>
         <div>
-          <h2 className="text-3xl font-black text-text">Gestionar Compras</h2>
+          <h2 className="text-xl sm:text-3xl font-black text-text">Gestionar Compras</h2>
           <p className="text-sm opacity-50 font-medium">Módulo de Compra y Pago — Registro Maestro-Detalle</p>
         </div>
       </div>
 
       {/* Tab switcher */}
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         <button className={tabCls('new')} onClick={() => setActiveTab('new')}>
           <Plus className="w-4 h-4" /> Nueva Compra
         </button>
@@ -1081,7 +1081,7 @@ export const GestionarComprasPage = () => {
                 </div>
 
                 {/* Fecha y Hora en fila */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <Label><span className="flex items-center gap-1"><CalendarDays className="w-3 h-3" /> Fecha de Emisión *</span></Label>
                     <input
@@ -1328,7 +1328,7 @@ export const GestionarComprasPage = () => {
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full min-w-[480px] text-sm">
                     <thead>
                       <tr className="border-b border-white/10">
                         <th className="text-left pb-3 font-black text-[10px] uppercase tracking-widest opacity-40">Producto</th>
@@ -1433,7 +1433,7 @@ export const GestionarComprasPage = () => {
       ══════════════════════════════════════════════════════════════════════ */}
       {activeTab === 'history' && (
         <SectionCard>
-          <div className="flex items-center justify-between mb-5">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
             <h3 className="font-black text-sm uppercase tracking-widest opacity-50 flex items-center gap-2">
               <ChevronRight className="w-4 h-4" /> Historial de Compras Registradas
             </h3>
@@ -1450,7 +1450,7 @@ export const GestionarComprasPage = () => {
             <p className="text-center opacity-30 py-6 text-sm font-bold">No hay compras registradas aún.</p>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full min-w-[800px] text-sm">
                 <thead>
                   <tr className="border-b border-white/10">
                     {['#', 'Nro. Factura', 'Fecha', 'Proveedor', 'Almacén', 'Condición', 'Envío', 'Monto Total', 'Estado', 'PDF'].map(h => (

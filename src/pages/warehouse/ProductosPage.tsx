@@ -113,11 +113,11 @@ const DetailModal = ({ producto: p, onClose, onEdit, onDelete, guardAction }: {
     </div>
   );
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-2 sm:p-4" onClick={onClose}>
       <div className="bg-card rounded-md w-full max-w-xl shadow-2xl border border-divider overflow-hidden max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
-        <div className="px-8 pt-8 pb-6 border-b border-divider bg-surface flex-shrink-0">
-          <div className="flex items-start gap-5">
-            <div className="w-48 h-48 rounded-md bg-surface flex-shrink-0 overflow-hidden flex items-center justify-center border border-divider">
+        <div className="px-4 sm:px-8 pt-6 sm:pt-8 pb-4 sm:pb-6 border-b border-divider bg-surface flex-shrink-0">
+          <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-5">
+            <div className="w-full sm:w-48 h-32 sm:h-48 rounded-md bg-surface flex-shrink-0 overflow-hidden flex items-center justify-center border border-divider">
               {p.Image ? <img src={resolveImg(p.Image)} alt={p.Nombre} className="w-full h-full object-cover" /> : <Package className="w-16 h-16 opacity-20" />}
             </div>
             <div className="flex-1 min-w-0">
@@ -137,8 +137,8 @@ const DetailModal = ({ producto: p, onClose, onEdit, onDelete, guardAction }: {
             <button onClick={onClose} className="p-2 rounded-md hover:bg-surface text-text opacity-40 hover:opacity-80 transition-all flex-shrink-0"><X className="w-4 h-4" /></button>
           </div>
         </div>
-        <div className="px-8 py-6 overflow-y-auto flex-1 flex flex-col gap-6">
-          <div className="grid grid-cols-2 gap-4">
+        <div className="px-4 sm:px-8 py-4 sm:py-6 overflow-y-auto flex-1 flex flex-col gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Código de Lote" value={<span className="font-mono">{p.CodigoBarra || '—'}</span>} />
             <Field label="Unidad de Medida" value={p.medida ? `${p.medida.Nombre} (${p.medida.Abreviatura})` : '—'} />
             <Field label="Ubicación" value={p.Ubicacion} />
@@ -171,7 +171,7 @@ const DetailModal = ({ producto: p, onClose, onEdit, onDelete, guardAction }: {
             ) : <p className="text-sm font-bold opacity-40 italic">Sin stock registrado en ningún almacén.</p>}
           </div>
         </div>
-        <div className="px-8 py-5 border-t border-divider flex items-center gap-3 bg-surface flex-shrink-0">
+        <div className="px-4 sm:px-8 py-4 sm:py-5 border-t border-divider flex items-center gap-3 bg-surface flex-shrink-0 flex-wrap">
           <button onClick={guardAction('MODULO_CATALOGO', () => { onClose(); onEdit(p); })} className="flex items-center gap-2 bg-primary/10 hover:bg-primary text-primary hover:text-white px-5 py-2.5 rounded-md text-xs font-black uppercase tracking-wider transition-all active:scale-95"><Pencil className="w-3.5 h-3.5" /> Editar</button>
           <button onClick={guardAction('MODULO_CATALOGO', () => { onClose(); onDelete(p); })} className="flex items-center gap-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white px-5 py-2.5 rounded-md text-xs font-black uppercase tracking-wider transition-all active:scale-95"><Trash2 className="w-3.5 h-3.5" /> Eliminar</button>
           <button onClick={onClose} className="ml-auto px-5 py-2.5 bg-card hover:bg-surface text-text rounded-md text-xs font-black uppercase tracking-wider transition-all">Cerrar</button>
@@ -313,9 +313,9 @@ const FormModal = ({ initial, categorias, medidas, onClose, onSaved }: {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-2 sm:p-4" onClick={onClose}>
       <div className="bg-card rounded-md w-full max-w-2xl shadow-2xl border border-divider overflow-hidden max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
-        <div className="px-8 pt-8 pb-5 border-b border-divider flex items-center justify-between flex-shrink-0">
+        <div className="px-4 sm:px-8 pt-6 sm:pt-8 pb-4 sm:pb-5 border-b border-divider flex items-center justify-between flex-shrink-0">
           <div>
             <h3 className="text-2xl font-black text-primary flex items-center gap-2">
               {isEdit ? <Pencil className="w-6 h-6" /> : <PlusCircle className="w-6 h-6" />}
@@ -328,7 +328,7 @@ const FormModal = ({ initial, categorias, medidas, onClose, onSaved }: {
           <button onClick={onClose} className="p-2 rounded-md hover:bg-surface opacity-40 hover:opacity-80 transition-all"><X className="w-4 h-4" /></button>
         </div>
 
-        <form onSubmit={handleSubmit} className="overflow-y-auto flex-1 px-8 py-6 flex flex-col gap-5">
+        <form onSubmit={handleSubmit} className="overflow-y-auto flex-1 px-4 sm:px-8 py-4 sm:py-6 flex flex-col gap-5">
           {/* Image Upload */}
           <div>
             <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-1.5 block">Imagen del Producto</label>
@@ -346,7 +346,7 @@ const FormModal = ({ initial, categorias, medidas, onClose, onSaved }: {
             <input required value={form.Nombre} onChange={set('Nombre')} placeholder="Ej. Leche Entera 1L" className={INPUT} />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-1.5 block">Código de Lote</label>
               <input value={form.CodigoBarra} onChange={set('CodigoBarra')} placeholder="LOT-2024-001" className={`${INPUT} font-mono`} />
@@ -357,7 +357,7 @@ const FormModal = ({ initial, categorias, medidas, onClose, onSaved }: {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-1.5 block">Categoría *</label>
               <div className="relative">
@@ -385,7 +385,7 @@ const FormModal = ({ initial, categorias, medidas, onClose, onSaved }: {
             <textarea value={form.Descripcion} onChange={set('Descripcion') as any} rows={2} placeholder="Descripción técnica..." className={`${INPUT} resize-none`} />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-1.5 block">Fecha de Elaboración</label>
               <input type="date" value={form.Fecha_Elaboracion} onChange={set('Fecha_Elaboracion')} className={INPUT} />
@@ -568,10 +568,10 @@ export const ProductosPage = () => {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h2 className="text-4xl font-black text-primary drop-shadow-sm flex items-center gap-3">
-            <Package className="w-10 h-10" /> Catálogo de Productos
+          <h2 className="text-2xl sm:text-4xl font-black text-primary drop-shadow-sm flex items-center gap-2 sm:gap-3">
+            <Package className="w-7 h-7 sm:w-10 sm:h-10" /> Catálogo de Productos
           </h2>
-          <p className="mt-2 text-lg font-bold text-text opacity-70">
+          <p className="mt-1 sm:mt-2 text-sm sm:text-lg font-bold text-text opacity-70">
             Maestro de artículos, precios y existencias por almacén.
           </p>
         </div>
@@ -670,7 +670,8 @@ export const ProductosPage = () => {
       {/* ── Table View ── */}
       {viewMode === 'list' && (
         <div className="bg-card border border-divider rounded-md shadow-sm overflow-hidden">
-          <table className="w-full text-left text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm min-w-[700px]">
             <thead className="bg-surface border-b border-divider">
               <tr>
                 <th className="p-4 font-black text-xs tracking-wider uppercase text-text w-16">Img</th>
@@ -751,6 +752,7 @@ export const ProductosPage = () => {
               }
             </tbody>
           </table>
+          </div>
           {!loading && productos.length === 0 && (
             <div className="flex flex-col items-center justify-center py-20 gap-3 opacity-25">
               <PackageOpen className="w-16 h-16" />
