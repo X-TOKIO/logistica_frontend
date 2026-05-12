@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
-  PieChart, Pie, Legend, AreaChart, Area, CartesianGrid,
+  PieChart, Pie, Legend, CartesianGrid,
 } from 'recharts';
 import {
   ShoppingCart, CreditCard, Users, Calendar,
@@ -504,7 +504,7 @@ export const FinanzasReportesTab = () => {
         reportSubtitle={modalType ? modalMeta[modalType]?.sub ?? '' : ''}
         pdfInfoText="Se adjuntará un PDF con el reporte completo"
         pdfInfoSub={modalType ? modalMeta[modalType]?.pdfSub ?? '' : ''}
-        onSend={(email, msg) => modalType && sendEmail(modalType, email, msg)}
+        onSend={(email, msg) => { if (modalType) sendEmail(modalType, email, msg); }}
         sending={!!sending}
       />
 

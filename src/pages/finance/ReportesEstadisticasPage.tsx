@@ -259,41 +259,6 @@ export const ReportesEstadisticasPage = () => {
     }
   };
 
-  const pdfInventario = async () => {
-    setGenPdf('inventario');
-    try {
-      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      addHeader(doc, 'REPORTE DE INVENTARIO — Stock y Mermas');
-      let y = 44;
-      doc.setTextColor(30,30,30); doc.setFontSize(10); doc.setFont('helvetica', 'bold');
-      doc.text('STOCK POR CATEGORÍA', 11, y); y += 4;
-      autoTable(doc, {
-        startY: y,
-        head: [['Categoría', 'Capital (Bs.)', 'Almacén', 'Proveedor']],
-        body: stockData.map((s: any) => [s.name, Number(s.value).toLocaleString(), s.almacen, s.proveedor]),
-        theme: 'grid',
-        headStyles: { fillColor: [20, 184, 166], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-        bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
-      });
-      y = ((doc as any).lastAutoTable?.finalY ?? 80) + 9;
-      if (y > 240) { doc.addPage(); addHeader(doc, 'REPORTE DE INVENTARIO'); y = 44; }
-      doc.setFontSize(10); doc.setFont('helvetica', 'bold');
-      doc.text('REGISTRO DE MERMAS', 11, y); y += 4;
-      autoTable(doc, {
-        startY: y,
-        head: [['Motivo', 'Monto (Bs.)']],
-        body: mermasDonut.map(m => [m.name, m.value.toLocaleString()]),
-        theme: 'grid',
-        headStyles: { fillColor: [239, 68, 68], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-        bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
-      });
-      addFooter(doc);
-      doc.save(`PARADISO_Inventario_${new Date().toISOString().slice(0,10)}.pdf`);
-      toast.success('PDF de Inventario descargado.');
-    } catch { toast.error('Error al generar PDF.'); }
-    finally { setGenPdf(null); }
-  };
-
   const pdfLogistica = async () => {
     setGenPdf('logistica');
     try {

@@ -799,10 +799,10 @@ function IngresosTab() {
     finally { setPdfLoad(false); }
   };
 
-  const handleSendEmail = async (emailAddr: string) => {
+  const handleSendEmail = async (emailAddr: string, msg?: string) => {
     setEmailSending(true);
     try {
-      await financeApi.enviarReportePdf('INGRESOS', emailAddr);
+      await financeApi.enviarReportePdf('INGRESOS', emailAddr, msg);
       toast.success(`Reporte de Ingresos enviado a ${emailAddr}`);
       setModalOpen(false);
     } catch (e: any) {
@@ -1046,10 +1046,10 @@ function EgresosTab() {
     finally { setPdfLoad(false); }
   };
 
-  const handleSendEmail = async (emailAddr: string) => {
+  const handleSendEmail = async (emailAddr: string, msg?: string) => {
     setEmailSending(true);
     try {
-      await financeApi.enviarReportePdf('EGRESOS', emailAddr);
+      await financeApi.enviarReportePdf('EGRESOS', emailAddr, msg);
       toast.success(`Reporte de Egresos enviado a ${emailAddr}`);
       setModalOpen(false);
     } catch (e: any) {
