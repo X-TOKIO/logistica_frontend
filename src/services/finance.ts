@@ -83,6 +83,17 @@ export const financeApi = {
   // ── Proveedores / Estadísticas ───────────────────────────────────────────
   getProveedores: async () => (await api.get('/payments/proveedores')).data,
   getEstadisticas: async () => (await api.get('/payments/estadisticas')).data,
-  enviarReportePdf: async (reportType: string, email: string) =>
-    (await api.post('/mail/reportes/enviar', { reportType, email })).data,
+  getEstadisticasFinanzas: async () => (await api.get('/payments/estadisticas/finanzas')).data,
+  enviarReportePdf: async (reportType: string, email: string, mensajePersonalizado?: string) =>
+    (await api.post('/mail/reportes/enviar', { reportType, email, mensajePersonalizado })).data,
+
+  // ── Config SMTP ──────────────────────────────────────────────────────────────
+  getConfigSmtp: async (): Promise<{ host: string; port: number; usuario: string; passwordSet: boolean }> =>
+    (await api.get('/mail/config')).data,
+
+  guardarConfigSmtp: async (cfg: { host: string; port: number; usuario: string; password?: string }) =>
+    (await api.post('/mail/config', cfg)).data,
+
+  probarConexionSmtp: async (): Promise<{ ok: boolean; message: string }> =>
+    (await api.post('/mail/config/test')).data,
 };
