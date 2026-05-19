@@ -11,7 +11,7 @@ import {
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
-const API_BASE = 'http://localhost:3000';
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
 
 const INPUT = 'bg-surface rounded-md px-4 py-3 outline-none focus:ring-2 ring-primary border border-divider font-bold text-text w-full';
 

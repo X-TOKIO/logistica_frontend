@@ -47,7 +47,7 @@ export const MermasPage = () => {
     const resolveImg = (imgPath: string | undefined) => {
         if (!imgPath) return null;
         if (imgPath.startsWith('http')) return imgPath;
-        return `http://localhost:3000${imgPath.startsWith('/') ? '' : '/'}${imgPath}`;
+        return `${import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000'}${imgPath.startsWith('/') ? '' : '/'}${imgPath}`;
     };
 
     const addDetalle = (prod: any) => {
