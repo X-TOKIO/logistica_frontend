@@ -501,7 +501,7 @@ export const FinanzasReportesTab = () => {
       }
       await financeApi.enviarPdfDirecto({
         email:   emailAddr,
-        pdfBase64: doc.output('base64'),
+        pdfBase64: doc.output('datauristring').split(',')[1],
         filename,
         asunto,
         mensajePersonalizado: msg,

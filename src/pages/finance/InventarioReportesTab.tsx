@@ -281,7 +281,7 @@ function StockTab() {
       const today = new Date().toISOString().slice(0, 10);
       await financeApi.enviarPdfDirecto({
         email:   emailAddr,
-        pdfBase64: doc.output('base64'),
+        pdfBase64: doc.output('datauristring').split(',')[1],
         filename:  `PARADISO_Stock_${today}.pdf`,
         asunto:    'Reporte de Stock Actual - PARADISO',
         mensajePersonalizado: msg,
@@ -565,7 +565,7 @@ function MermasTab() {
       const today = new Date().toISOString().slice(0, 10);
       await financeApi.enviarPdfDirecto({
         email:   emailAddr,
-        pdfBase64: doc.output('base64'),
+        pdfBase64: doc.output('datauristring').split(',')[1],
         filename:  `PARADISO_Mermas_${today}.pdf`,
         asunto:    'Reporte de Mermas y Pérdidas - PARADISO',
         mensajePersonalizado: msg,
@@ -850,7 +850,7 @@ function IngresosTab() {
       const today = new Date().toISOString().slice(0, 10);
       await financeApi.enviarPdfDirecto({
         email:   emailAddr,
-        pdfBase64: doc.output('base64'),
+        pdfBase64: doc.output('datauristring').split(',')[1],
         filename:  `PARADISO_Ingresos_${today}.pdf`,
         asunto:    'Reporte de Ingresos de Inventario - PARADISO',
         mensajePersonalizado: msg,
@@ -1114,7 +1114,7 @@ function EgresosTab() {
       const today = new Date().toISOString().slice(0, 10);
       await financeApi.enviarPdfDirecto({
         email:   emailAddr,
-        pdfBase64: doc.output('base64'),
+        pdfBase64: doc.output('datauristring').split(',')[1],
         filename:  `PARADISO_Egresos_${today}.pdf`,
         asunto:    'Reporte de Egresos de Inventario - PARADISO',
         mensajePersonalizado: msg,

@@ -8,7 +8,7 @@ import {
 import {
   Package, DollarSign, Truck, Download, Printer,
   AlertTriangle, TrendingUp, TrendingDown,
-  Send, Settings, MapPin,
+  Send, MapPin,
   Filter, Users,
 } from 'lucide-react';
 import { EmailReportModal } from '../../components/shared/EmailReportModal';
@@ -374,7 +374,7 @@ export const ReportesEstadisticasPage = () => {
       const today = new Date().toISOString().slice(0, 10);
       await financeApi.enviarPdfDirecto({
         email:   emailAddr,
-        pdfBase64: doc.output('base64'),
+        pdfBase64: doc.output('datauristring').split(',')[1],
         filename:  `PARADISO_Logistica_${today}.pdf`,
         asunto:    'Reporte Logístico & Rutas - PARADISO',
         mensajePersonalizado: msg,
