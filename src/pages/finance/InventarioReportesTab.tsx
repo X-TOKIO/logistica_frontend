@@ -238,30 +238,37 @@ function StockTab() {
   const numProductos = useMemo(() => new Set(filtered.map((r: any) => r.ID_Producto)).size, [filtered]);
   const numAlmacenes = useMemo(() => new Set(filtered.map((r: any) => r.ID_Almacen)).size, [filtered]);
 
+  const buildPdfDoc = () => {
+    const almNombre = selAlm === 'all'
+      ? 'Todos los Almacenes'
+      : (almacenes.find((a: any) => String(a.ID_Almacen) === selAlm)?.Nombre || selAlm).replace('PARADISO — ', '');
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    addPdfHeader(doc, `REPORTE DE STOCK — Almacén: ${almNombre} | Categoría: ${selCat === 'all' ? 'Todas' : selCat}`);
+    let y = 44;
+    doc.setTextColor(30, 30, 30); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
+    doc.text(`Productos: ${numProductos}   Almacenes: ${numAlmacenes}   Total Unidades: ${totalStock.toLocaleString()}   Capital: ${fmtBs(totalValor)}`, 11, y);
+    y += 6;
+    autoTable(doc, {
+      startY: y,
+      head: [['Producto', 'Categoría', 'Almacén', 'Stock', 'Precio Unit.', 'Valor (Bs.)']],
+      body: filtered.map((s: any) => [
+        s.producto.Nombre, s.producto.categoria, s.almacen.Nombre.replace('PARADISO — ', ''),
+        s.Stock_Actual.toLocaleString(),
+        fmtBs(s.producto.PrecioUnitario),
+        fmtBs(s.valorTotal),
+      ]),
+      theme: 'grid',
+      headStyles: { fillColor: [20, 184, 166], textColor: 255, fontStyle: 'bold', fontSize: 7.5 },
+      bodyStyles: { fontSize: 7.5 }, margin: { left: 11, right: 11 },
+    });
+    addPdfFooter(doc);
+    return doc;
+  };
+
   const handlePdf = async () => {
     setPdfLoad(true);
     try {
-      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      addPdfHeader(doc, 'REPORTE DE STOCK — Inventario por Producto y Almacén');
-      let y = 44;
-      doc.setTextColor(30, 30, 30); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
-      doc.text(`Productos: ${numProductos}   Almacenes: ${numAlmacenes}   Total Unidades: ${totalStock.toLocaleString()}   Capital: ${fmtBs(totalValor)}`, 11, y);
-      y += 6;
-      autoTable(doc, {
-        startY: y,
-        head: [['Producto', 'Categoría', 'Almacén', 'Stock', 'Precio Unit.', 'Valor (Bs.)']],
-        body: filtered.map((s: any) => [
-          s.producto.Nombre, s.producto.categoria, s.almacen.Nombre.replace('PARADISO — ', ''),
-          s.Stock_Actual.toLocaleString(),
-          fmtBs(s.producto.PrecioUnitario),
-          fmtBs(s.valorTotal),
-        ]),
-        theme: 'grid',
-        headStyles: { fillColor: [20, 184, 166], textColor: 255, fontStyle: 'bold', fontSize: 7.5 },
-        bodyStyles: { fontSize: 7.5 }, margin: { left: 11, right: 11 },
-      });
-      addPdfFooter(doc);
-      doc.save(`PARADISO_Stock_${new Date().toISOString().slice(0, 10)}.pdf`);
+      buildPdfDoc().save(`PARADISO_Stock_${new Date().toISOString().slice(0, 10)}.pdf`);
       toast.success('PDF de Stock descargado.');
     } catch { toast.error('Error al generar PDF.'); }
     finally { setPdfLoad(false); }
@@ -270,7 +277,16 @@ function StockTab() {
   const handleSendEmail = async (emailAddr: string, msg?: string) => {
     setEmailSending(true);
     try {
-      await financeApi.enviarReportePdf('INVENTARIO', emailAddr, msg);
+      const doc   = buildPdfDoc();
+      const today = new Date().toISOString().slice(0, 10);
+      await financeApi.enviarPdfDirecto({
+        email:   emailAddr,
+        pdfBase64: doc.output('base64'),
+        filename:  `PARADISO_Stock_${today}.pdf`,
+        asunto:    'Reporte de Stock Actual - PARADISO',
+        mensajePersonalizado: msg,
+        reportType: 'INVENTARIO',
+      });
       toast.success(`Reporte de Stock enviado a ${emailAddr}`);
       setModalOpen(false);
     } catch (e: any) {
@@ -291,8 +307,12 @@ function StockTab() {
         onClose={() => setModalOpen(false)}
         reportTitle="Stock Actual por Producto"
         reportSubtitle="Inventario · PARADISO"
-        pdfInfoText="Se adjuntará un PDF con el reporte completo"
+        pdfInfoText="Se generará un PDF con los filtros activos aplicados"
         pdfInfoSub="Incluye tabla de stock por producto y almacén"
+        filters={[
+          { label: 'Almacén',   value: selAlm === 'all' ? 'Todos' : (almacenes.find((a: any) => String(a.ID_Almacen) === selAlm)?.Nombre || selAlm).replace('PARADISO — ', '') },
+          { label: 'Categoría', value: selCat === 'all' ? 'Todas' : selCat },
+        ]}
         onSend={(email, msg) => handleSendEmail(email, msg)}
         sending={emailSending}
       />
@@ -509,24 +529,30 @@ function MermasTab() {
       .map(([name, perdida]) => ({ name: name.slice(-5), perdida: +perdida.toFixed(2) }));
   }, [filtered, period]);
 
+  const buildPdfDoc = () => {
+    const periodoDesc = selValue ? `${labelPeriod(period)}: ${selValue}` : 'Todos los períodos';
+    const motivoDesc  = selMotivo === 'all' ? 'Todos los motivos' : selMotivo;
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    addPdfHeader(doc, `REPORTE DE MERMAS — Período: ${periodoDesc} | Motivo: ${motivoDesc}`);
+    let y = 44;
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(30, 30, 30);
+    doc.text(`Registros: ${filtered.length}   Pérdida Total: ${fmtBs(totalPerdida)}   Motivo Principal: ${topMotivo}`, 11, y); y += 6;
+    autoTable(doc, {
+      startY: y,
+      head: [['Fecha', 'Motivo', 'Producto', 'Cantidad', 'Pérdida (Bs.)', 'Operador']],
+      body: filtered.map(r => [r.fecha, r.motivo, r.producto, r.cantidad.toLocaleString(), fmtBs(r.costo), r.empleado]),
+      theme: 'grid',
+      headStyles: { fillColor: [239, 68, 68], textColor: 255, fontStyle: 'bold', fontSize: 7.5 },
+      bodyStyles: { fontSize: 7.5 }, margin: { left: 11, right: 11 },
+    });
+    addPdfFooter(doc);
+    return doc;
+  };
+
   const handlePdf = async () => {
     setPdfLoad(true);
     try {
-      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      addPdfHeader(doc, `REPORTE DE MERMAS — Período: ${labelPeriod(period)} ${selValue || 'Todos'}`);
-      let y = 44;
-      doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(30, 30, 30);
-      doc.text(`Registros: ${filtered.length}   Pérdida Total: ${fmtBs(totalPerdida)}   Motivo Principal: ${topMotivo}`, 11, y); y += 6;
-      autoTable(doc, {
-        startY: y,
-        head: [['Fecha', 'Motivo', 'Producto', 'Cantidad', 'Pérdida (Bs.)']],
-        body: filtered.map(r => [r.fecha, r.motivo, r.producto, r.cantidad.toLocaleString(), fmtBs(r.costo)]),
-        theme: 'grid',
-        headStyles: { fillColor: [239, 68, 68], textColor: 255, fontStyle: 'bold', fontSize: 7.5 },
-        bodyStyles: { fontSize: 7.5 }, margin: { left: 11, right: 11 },
-      });
-      addPdfFooter(doc);
-      doc.save(`PARADISO_Mermas_${new Date().toISOString().slice(0, 10)}.pdf`);
+      buildPdfDoc().save(`PARADISO_Mermas_${new Date().toISOString().slice(0, 10)}.pdf`);
       toast.success('PDF de Mermas descargado.');
     } catch { toast.error('Error al generar PDF.'); }
     finally { setPdfLoad(false); }
@@ -535,7 +561,16 @@ function MermasTab() {
   const handleSendEmail = async (emailAddr: string, msg?: string) => {
     setEmailSending(true);
     try {
-      await financeApi.enviarReportePdf('MERMAS', emailAddr, msg);
+      const doc   = buildPdfDoc();
+      const today = new Date().toISOString().slice(0, 10);
+      await financeApi.enviarPdfDirecto({
+        email:   emailAddr,
+        pdfBase64: doc.output('base64'),
+        filename:  `PARADISO_Mermas_${today}.pdf`,
+        asunto:    'Reporte de Mermas y Pérdidas - PARADISO',
+        mensajePersonalizado: msg,
+        reportType: 'MERMAS',
+      });
       toast.success(`Reporte de Mermas enviado a ${emailAddr}`);
       setModalOpen(false);
     } catch (e: any) {
@@ -556,8 +591,12 @@ function MermasTab() {
         onClose={() => setModalOpen(false)}
         reportTitle="Reporte de Mermas"
         reportSubtitle="Inventario · PARADISO"
-        pdfInfoText="Se adjuntará un PDF con el reporte completo"
+        pdfInfoText="Se generará un PDF con los filtros activos aplicados"
         pdfInfoSub="Incluye pérdidas por motivo, producto y período"
+        filters={[
+          { label: 'Período', value: selValue ? `${labelPeriod(period)}: ${selValue}` : 'Todos' },
+          { label: 'Motivo',  value: selMotivo === 'all' ? 'Todos' : selMotivo },
+        ]}
         onSend={(email, msg) => handleSendEmail(email, msg)}
         sending={emailSending}
       />
@@ -776,24 +815,29 @@ function IngresosTab() {
     return Object.entries(m).map(([name, cant]) => ({ name, cant })).sort((a, b) => b.cant - a.cant);
   }, [filtered]);
 
+  const buildPdfDoc = () => {
+    const periodoDesc = selValue ? `${labelPeriod(period)}: ${selValue}` : 'Todos los períodos';
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    addPdfHeader(doc, `REPORTE DE INGRESOS — Período: ${periodoDesc}`);
+    let y = 44;
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(30, 30, 30);
+    doc.text(`Registros: ${filtered.length}   Unidades: ${totalItems.toLocaleString()}   Valor Total: ${fmtBs(totalValor)}`, 11, y); y += 6;
+    autoTable(doc, {
+      startY: y,
+      head: [['Nota', 'Fecha', 'Proveedor', 'Producto', 'Almacén Destino', 'Cantidad', 'Valor (Bs.)']],
+      body: filtered.map(r => [r.nota, r.fecha, r.proveedor, r.producto, r.almacen.replace('PARADISO — ', ''), r.cantidad.toLocaleString(), fmtBs(r.valor)]),
+      theme: 'grid',
+      headStyles: { fillColor: [16, 185, 129], textColor: 255, fontStyle: 'bold', fontSize: 7.5 },
+      bodyStyles: { fontSize: 7.5 }, margin: { left: 11, right: 11 },
+    });
+    addPdfFooter(doc);
+    return doc;
+  };
+
   const handlePdf = async () => {
     setPdfLoad(true);
     try {
-      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      addPdfHeader(doc, `REPORTE DE INGRESOS — Período: ${labelPeriod(period)} ${selValue || 'Todos'}`);
-      let y = 44;
-      doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(30, 30, 30);
-      doc.text(`Registros: ${filtered.length}   Unidades: ${totalItems.toLocaleString()}   Valor Total: ${fmtBs(totalValor)}`, 11, y); y += 6;
-      autoTable(doc, {
-        startY: y,
-        head: [['Nota', 'Fecha', 'Proveedor', 'Producto', 'Cantidad', 'Valor (Bs.)']],
-        body: filtered.map(r => [r.nota, r.fecha, r.proveedor, r.producto, r.cantidad.toLocaleString(), fmtBs(r.valor)]),
-        theme: 'grid',
-        headStyles: { fillColor: [16, 185, 129], textColor: 255, fontStyle: 'bold', fontSize: 7.5 },
-        bodyStyles: { fontSize: 7.5 }, margin: { left: 11, right: 11 },
-      });
-      addPdfFooter(doc);
-      doc.save(`PARADISO_Ingresos_${new Date().toISOString().slice(0, 10)}.pdf`);
+      buildPdfDoc().save(`PARADISO_Ingresos_${new Date().toISOString().slice(0, 10)}.pdf`);
       toast.success('PDF de Ingresos descargado.');
     } catch { toast.error('Error al generar PDF.'); }
     finally { setPdfLoad(false); }
@@ -802,7 +846,16 @@ function IngresosTab() {
   const handleSendEmail = async (emailAddr: string, msg?: string) => {
     setEmailSending(true);
     try {
-      await financeApi.enviarReportePdf('INGRESOS', emailAddr, msg);
+      const doc   = buildPdfDoc();
+      const today = new Date().toISOString().slice(0, 10);
+      await financeApi.enviarPdfDirecto({
+        email:   emailAddr,
+        pdfBase64: doc.output('base64'),
+        filename:  `PARADISO_Ingresos_${today}.pdf`,
+        asunto:    'Reporte de Ingresos de Inventario - PARADISO',
+        mensajePersonalizado: msg,
+        reportType: 'INGRESOS',
+      });
       toast.success(`Reporte de Ingresos enviado a ${emailAddr}`);
       setModalOpen(false);
     } catch (e: any) {
@@ -823,8 +876,11 @@ function IngresosTab() {
         onClose={() => setModalOpen(false)}
         reportTitle="Reporte de Ingresos"
         reportSubtitle="Inventario · PARADISO"
-        pdfInfoText="Se adjuntará un PDF con el reporte completo"
-        pdfInfoSub="Incluye productos recibidos, valor y evolución"
+        pdfInfoText="Se generará un PDF con los filtros activos aplicados"
+        pdfInfoSub="Incluye productos recibidos, proveedor, almacén y valor"
+        filters={[
+          { label: 'Período', value: selValue ? `${labelPeriod(period)}: ${selValue}` : 'Todos' },
+        ]}
         onSend={(email, msg) => handleSendEmail(email, msg)}
         sending={emailSending}
       />
@@ -1023,24 +1079,29 @@ function EgresosTab() {
     return Object.entries(m).map(([name, cant]) => ({ name, cant })).sort((a, b) => b.cant - a.cant);
   }, [filtered]);
 
+  const buildPdfDoc = () => {
+    const periodoDesc = selValue ? `${labelPeriod(period)}: ${selValue}` : 'Todos los períodos';
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    addPdfHeader(doc, `REPORTE DE EGRESOS — Período: ${periodoDesc}`);
+    let y = 44;
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(30, 30, 30);
+    doc.text(`Registros: ${filtered.length}   Unidades: ${totalItems.toLocaleString()}   Valor Total: ${fmtBs(totalValor)}`, 11, y); y += 6;
+    autoTable(doc, {
+      startY: y,
+      head: [['Nota', 'Fecha', 'Producto', 'Cantidad', 'Sucursal Destino', 'Valor (Bs.)']],
+      body: filtered.map(r => [r.nota, r.fecha, r.producto, r.cantidad.toLocaleString(), r.sucursal, fmtBs(r.valor)]),
+      theme: 'grid',
+      headStyles: { fillColor: [245, 158, 11], textColor: 255, fontStyle: 'bold', fontSize: 7.5 },
+      bodyStyles: { fontSize: 7.5 }, margin: { left: 11, right: 11 },
+    });
+    addPdfFooter(doc);
+    return doc;
+  };
+
   const handlePdf = async () => {
     setPdfLoad(true);
     try {
-      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      addPdfHeader(doc, `REPORTE DE EGRESOS — Período: ${labelPeriod(period)} ${selValue || 'Todos'}`);
-      let y = 44;
-      doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(30, 30, 30);
-      doc.text(`Registros: ${filtered.length}   Unidades: ${totalItems.toLocaleString()}   Valor Total: ${fmtBs(totalValor)}`, 11, y); y += 6;
-      autoTable(doc, {
-        startY: y,
-        head: [['Nota', 'Fecha', 'Producto', 'Cantidad', 'Sucursal Destino', 'Valor (Bs.)']],
-        body: filtered.map(r => [r.nota, r.fecha, r.producto, r.cantidad.toLocaleString(), r.sucursal, fmtBs(r.valor)]),
-        theme: 'grid',
-        headStyles: { fillColor: [245, 158, 11], textColor: 255, fontStyle: 'bold', fontSize: 7.5 },
-        bodyStyles: { fontSize: 7.5 }, margin: { left: 11, right: 11 },
-      });
-      addPdfFooter(doc);
-      doc.save(`PARADISO_Egresos_${new Date().toISOString().slice(0, 10)}.pdf`);
+      buildPdfDoc().save(`PARADISO_Egresos_${new Date().toISOString().slice(0, 10)}.pdf`);
       toast.success('PDF de Egresos descargado.');
     } catch { toast.error('Error al generar PDF.'); }
     finally { setPdfLoad(false); }
@@ -1049,7 +1110,16 @@ function EgresosTab() {
   const handleSendEmail = async (emailAddr: string, msg?: string) => {
     setEmailSending(true);
     try {
-      await financeApi.enviarReportePdf('EGRESOS', emailAddr, msg);
+      const doc   = buildPdfDoc();
+      const today = new Date().toISOString().slice(0, 10);
+      await financeApi.enviarPdfDirecto({
+        email:   emailAddr,
+        pdfBase64: doc.output('base64'),
+        filename:  `PARADISO_Egresos_${today}.pdf`,
+        asunto:    'Reporte de Egresos de Inventario - PARADISO',
+        mensajePersonalizado: msg,
+        reportType: 'EGRESOS',
+      });
       toast.success(`Reporte de Egresos enviado a ${emailAddr}`);
       setModalOpen(false);
     } catch (e: any) {
@@ -1070,8 +1140,11 @@ function EgresosTab() {
         onClose={() => setModalOpen(false)}
         reportTitle="Reporte de Egresos"
         reportSubtitle="Inventario · PARADISO"
-        pdfInfoText="Se adjuntará un PDF con el reporte completo"
-        pdfInfoSub="Incluye productos despachados, valor y sucursal destino"
+        pdfInfoText="Se generará un PDF con los filtros activos aplicados"
+        pdfInfoSub="Incluye productos despachados, sucursal destino y valor"
+        filters={[
+          { label: 'Período', value: selValue ? `${labelPeriod(period)}: ${selValue}` : 'Todos' },
+        ]}
         onSend={(email, msg) => handleSendEmail(email, msg)}
         sending={emailSending}
       />

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, X, FileText } from 'lucide-react';
+import { Mail, X, FileText, SlidersHorizontal } from 'lucide-react';
 
 interface EmailReportModalProps {
   open: boolean;
@@ -9,6 +9,7 @@ interface EmailReportModalProps {
   reportSubtitle: string;
   pdfInfoText?: string;
   pdfInfoSub?: string;
+  filters?: { label: string; value: string }[];
   onSend: (email: string, message: string) => Promise<void> | void;
   sending?: boolean;
 }
@@ -18,8 +19,9 @@ export function EmailReportModal({
   onClose,
   reportTitle,
   reportSubtitle,
-  pdfInfoText = 'Se adjuntará un PDF con el reporte completo',
-  pdfInfoSub = 'Incluye tabla del periodo seleccionado',
+  pdfInfoText = 'Se generará un PDF con los filtros activos',
+  pdfInfoSub  = 'Incluye tabla del periodo seleccionado',
+  filters,
   onSend,
   sending = false,
 }: EmailReportModalProps) {
@@ -81,6 +83,24 @@ export function EmailReportModal({
 
             {/* Body */}
             <div className="px-6 py-5 flex flex-col gap-4">
+
+              {/* Filtros activos */}
+              {filters && filters.length > 0 && (
+                <div className="rounded-xl bg-gray-800/60 border border-amber-500/20 p-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <SlidersHorizontal className="w-3.5 h-3.5 text-amber-400" />
+                    <span className="text-[10px] font-bold text-amber-400 tracking-widest uppercase">Filtros aplicados al reporte</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {filters.map(f => (
+                      <div key={f.label} className="flex items-center gap-1.5 text-xs bg-gray-900/60 border border-gray-700 rounded-lg px-2.5 py-1">
+                        <span className="text-gray-500">{f.label}:</span>
+                        <span className="text-amber-300 font-semibold">{f.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Email */}
               <div>

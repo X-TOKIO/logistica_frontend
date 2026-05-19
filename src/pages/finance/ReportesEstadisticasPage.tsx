@@ -6,9 +6,9 @@ import {
   CartesianGrid, Cell,
 } from 'recharts';
 import {
-  Package, DollarSign, Truck, Mail, Download, Printer,
+  Package, DollarSign, Truck, Download, Printer,
   AlertTriangle, TrendingUp, TrendingDown,
-  Send, FileText, Server, Settings, Wifi, MapPin,
+  Send, Settings, MapPin,
   Filter, Users,
 } from 'lucide-react';
 import { EmailReportModal } from '../../components/shared/EmailReportModal';
@@ -41,15 +41,6 @@ const CARD = [
   'rounded-2xl',
 ].join(' ');
 
-const SMTP_INPUT = [
-  'w-full bg-gray-100 dark:bg-gray-700/60',
-  'border border-gray-300 dark:border-gray-600',
-  'rounded-xl px-3 py-2.5 text-sm',
-  'text-gray-800 dark:text-gray-200',
-  'placeholder:text-gray-400 dark:placeholder:text-gray-500',
-  'outline-none focus:border-teal-500/60 transition-colors',
-].join(' ');
-
 // ─── Hooks ────────────────────────────────────────────────────────────────────
 function useIsDark() {
   const [dark, setDark] = useState(() =>
@@ -74,12 +65,11 @@ const DEMO_GEO: Record<string, number> = {
 };
 
 // ─── Tabs ─────────────────────────────────────────────────────────────────────
-type TabId = 'inventario' | 'finanzas' | 'logistica' | 'correo';
+type TabId = 'inventario' | 'finanzas' | 'logistica';
 const TABS: { id: TabId; label: string; icon: React.ElementType }[] = [
   { id: 'inventario', label: 'Inventario',  icon: Package    },
   { id: 'finanzas',   label: 'Finanzas',    icon: DollarSign },
   { id: 'logistica',  label: 'Logística',   icon: Truck      },
-  { id: 'correo',     label: 'Correo',      icon: Mail       },
 ];
 
 // ─── Tooltip style helper ─────────────────────────────────────────────────────
@@ -115,32 +105,15 @@ export const ReportesEstadisticasPage = () => {
   // Logística period filter
   const [logPeriod, setLogPeriod] = useState<'todo' | 'dia' | 'mes' | 'anio'>('todo');
   const [logValue,  setLogValue]  = useState('');
-  const [smtpHost,    setSmtpHost]    = useState('');
-  const [smtpPort,    setSmtpPort]    = useState('25565');
-  const [smtpUser,    setSmtpUser]    = useState('');
-  const [smtpPass,    setSmtpPass]    = useState('');
-  const [smtpTls,     setSmtpTls]     = useState(false);
-  const [smtpEmail,   setSmtpEmail]   = useState('');
-  const [smtpSending, setSmtpSending] = useState('');
-  const [smtpSaving,  setSmtpSaving]  = useState(false);
-  const [smtpTesting, setSmtpTesting] = useState(false);
-
   useEffect(() => {
     Promise.allSettled([
       financeApi.getEstadisticas(),
       inventoryApi.getMermas(),
       logisticsApi.getHistorial(),
-      financeApi.getConfigSmtp(),
-    ]).then(([sR, mR, hR, cfgR]) => {
+    ]).then(([sR, mR, hR]) => {
       if (sR.status === 'fulfilled') setStats(sR.value);
       if (mR.status === 'fulfilled') setMermas(mR.value || []);
       if (hR.status === 'fulfilled') setHistorial(hR.value || []);
-      if (cfgR.status === 'fulfilled' && cfgR.value?.host) {
-        const c = cfgR.value;
-        setSmtpHost(c.host || '');
-        setSmtpPort(String(c.port || '25565'));
-        setSmtpUser(c.usuario || '');
-      }
     }).finally(() => setLoading(false));
   }, []);
 
@@ -259,58 +232,62 @@ export const ReportesEstadisticasPage = () => {
     }
   };
 
+  const buildLogisticaDoc = () => {
+    const periodoDesc = logPeriod !== 'todo' && logValue
+      ? `${logPeriod === 'dia' ? 'Día' : logPeriod === 'mes' ? 'Mes' : 'Año'}: ${logValue}`
+      : 'Todo el período';
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    addHeader(doc, `REPORTE LOGÍSTICO — ${periodoDesc}`);
+    let y = 44;
+
+    doc.setTextColor(30,30,30); doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+    const tituloTiempo = logPeriod === 'mes' ? 'DESPACHOS POR DÍA'
+      : logPeriod === 'anio' ? 'DESPACHOS POR MES'
+      : logPeriod === 'dia'  ? 'DESPACHOS DEL DÍA'
+      : 'DESPACHOS POR MES';
+    doc.text(tituloTiempo, 11, y); y += 4;
+    autoTable(doc, {
+      startY: y,
+      head: [['Período', 'Cantidad']],
+      body: despachosEnTiempo.map(d => [d.fecha, String(d.despachos)]),
+      theme: 'grid',
+      headStyles: { fillColor: [59, 130, 246], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+      bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
+    });
+    y = ((doc as any).lastAutoTable?.finalY ?? 80) + 9;
+    if (y > 240) { doc.addPage(); addHeader(doc, 'REPORTE LOGÍSTICO'); y = 44; }
+
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+    doc.text('TOP CHOFERES POR DESPACHOS', 11, y); y += 4;
+    autoTable(doc, {
+      startY: y,
+      head: [['#', 'Chofer', 'Despachos Realizados']],
+      body: topChoferes.map((c: any, i: number) => [String(i + 1), c.nombre, String(c.despachos)]),
+      theme: 'grid',
+      headStyles: { fillColor: [20, 184, 166], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+      bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
+    });
+    y = ((doc as any).lastAutoTable?.finalY ?? 110) + 9;
+    if (y > 240) { doc.addPage(); addHeader(doc, 'REPORTE LOGÍSTICO'); y = 44; }
+
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+    doc.text('DESPACHOS POR SUCURSAL', 11, y); y += 4;
+    autoTable(doc, {
+      startY: y,
+      head: [['Sucursal', 'Despachos']],
+      body: despachosPorSucursal.map(d => [d.name, String(d.Despachos)]),
+      theme: 'grid',
+      headStyles: { fillColor: [245, 158, 11], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+      bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
+    });
+    addFooter(doc);
+    return doc;
+  };
+
   const pdfLogistica = async () => {
     setGenPdf('logistica');
     try {
-      const periodoDesc = logPeriod !== 'todo' && logValue
-        ? `${logPeriod === 'dia' ? 'Día' : logPeriod === 'mes' ? 'Mes' : 'Año'}: ${logValue}`
-        : 'Todo el período';
-      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      addHeader(doc, `REPORTE LOGÍSTICO — ${periodoDesc}`);
-      let y = 44;
-
-      doc.setTextColor(30,30,30); doc.setFontSize(10); doc.setFont('helvetica', 'bold');
-      const tituloTiempo = logPeriod === 'mes' ? 'DESPACHOS POR DÍA'
-        : logPeriod === 'anio' ? 'DESPACHOS POR MES'
-        : logPeriod === 'dia'  ? 'DESPACHOS DEL DÍA'
-        : 'DESPACHOS POR MES';
-      doc.text(tituloTiempo, 11, y); y += 4;
-      autoTable(doc, {
-        startY: y,
-        head: [['Período', 'Cantidad']],
-        body: despachosEnTiempo.map(d => [d.fecha, String(d.despachos)]),
-        theme: 'grid',
-        headStyles: { fillColor: [59, 130, 246], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-        bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
-      });
-      y = ((doc as any).lastAutoTable?.finalY ?? 80) + 9;
-      if (y > 240) { doc.addPage(); addHeader(doc, 'REPORTE LOGÍSTICO'); y = 44; }
-
-      doc.setFontSize(10); doc.setFont('helvetica', 'bold');
-      doc.text('TOP CHOFERES POR DESPACHOS', 11, y); y += 4;
-      autoTable(doc, {
-        startY: y,
-        head: [['#', 'Chofer', 'Despachos Realizados']],
-        body: topChoferes.map((c: any, i: number) => [String(i + 1), c.nombre, String(c.despachos)]),
-        theme: 'grid',
-        headStyles: { fillColor: [20, 184, 166], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-        bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
-      });
-      y = ((doc as any).lastAutoTable?.finalY ?? 110) + 9;
-      if (y > 240) { doc.addPage(); addHeader(doc, 'REPORTE LOGÍSTICO'); y = 44; }
-
-      doc.setFontSize(10); doc.setFont('helvetica', 'bold');
-      doc.text('DESPACHOS POR SUCURSAL', 11, y); y += 4;
-      autoTable(doc, {
-        startY: y,
-        head: [['Sucursal', 'Despachos']],
-        body: despachosPorSucursal.map(d => [d.name, String(d.Despachos)]),
-        theme: 'grid',
-        headStyles: { fillColor: [245, 158, 11], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-        bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
-      });
-      addFooter(doc);
-      doc.save(`PARADISO_Logistica_${new Date().toISOString().slice(0,10)}.pdf`);
+      buildLogisticaDoc().save(`PARADISO_Logistica_${new Date().toISOString().slice(0,10)}.pdf`);
       toast.success('PDF de Logística descargado.');
     } catch { toast.error('Error al generar PDF.'); }
     finally { setGenPdf(null); }
@@ -390,14 +367,23 @@ export const ReportesEstadisticasPage = () => {
     finally { setGenPdf(null); }
   };
 
-  const sendPdf = async (type: string, emailAddr: string) => {
+  const sendPdf = async (_type: string, emailAddr: string, msg?: string) => {
     setLogSending(true);
     try {
-      await financeApi.enviarReportePdf(type, emailAddr);
-      toast.success(`Reporte ${type} enviado a ${emailAddr}`);
+      const doc   = buildLogisticaDoc();
+      const today = new Date().toISOString().slice(0, 10);
+      await financeApi.enviarPdfDirecto({
+        email:   emailAddr,
+        pdfBase64: doc.output('base64'),
+        filename:  `PARADISO_Logistica_${today}.pdf`,
+        asunto:    'Reporte Logístico & Rutas - PARADISO',
+        mensajePersonalizado: msg,
+        reportType: 'DESPACHOS',
+      });
+      toast.success(`Reporte Logístico enviado a ${emailAddr}`);
       setLogModalOpen(false);
     } catch (e: any) {
-      toast.error(e.response?.data?.message || 'Error SMTP al enviar el reporte.');
+      toast.error(e.response?.data?.message || 'Error al enviar el reporte.');
     } finally { setLogSending(false); }
   };
 
@@ -538,9 +524,13 @@ export const ReportesEstadisticasPage = () => {
               onClose={() => setLogModalOpen(false)}
               reportTitle="Logística & Rutas"
               reportSubtitle="Despachos · PARADISO"
-              pdfInfoText="Se adjuntará un PDF con el reporte completo"
+              pdfInfoText="Se generará un PDF con los filtros activos aplicados"
               pdfInfoSub="Incluye despachos por período, choferes y sucursales"
-              onSend={(email) => sendPdf('DESPACHOS', email)}
+              filters={[
+                { label: 'Período', value: logPeriod !== 'todo' && logValue ? `${logPeriod === 'dia' ? 'Día' : logPeriod === 'mes' ? 'Mes' : 'Año'}: ${logValue}` : 'Todo' },
+                { label: 'Despachos en rango', value: String(historialFiltrado.length) },
+              ]}
+              onSend={(email, msg) => sendPdf('DESPACHOS', email, msg)}
               sending={logSending}
             />
             {/* Header */}
@@ -742,186 +732,6 @@ export const ReportesEstadisticasPage = () => {
           </motion.div>
         )}
 
-        {/* ══ CORREO ══════════════════════════════════════════════════════════ */}
-        {activeTab === 'correo' && (
-          <motion.div key="mail"
-            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.22 }}
-            className="flex flex-col gap-4"
-          >
-            <div>
-              <h3 className="text-base font-semibold text-gray-900 dark:text-white">Distribución por Correo</h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Configure el servidor SMTP y envíe reportes automáticamente</p>
-            </div>
-
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-
-              {/* SMTP Config form */}
-              <div className={`${CARD} p-5`}>
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-8 h-8 rounded-xl bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-                    <Server className="w-4 h-4 text-amber-500" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Configuración SMTP</h4>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Servidor de correo saliente</p>
-                  </div>
-                  <span className="flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full flex-shrink-0">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-                    Pendiente
-                  </span>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Host SMTP</label>
-                      <input value={smtpHost} onChange={e => setSmtpHost(e.target.value)}
-                        placeholder="smtp.gmail.com" className={SMTP_INPUT} />
-                    </div>
-                    <div>
-                      <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Puerto</label>
-                      <input value={smtpPort} onChange={e => setSmtpPort(e.target.value)}
-                        placeholder="587" className={SMTP_INPUT} />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Usuario / Email</label>
-                    <input value={smtpUser} onChange={e => setSmtpUser(e.target.value)}
-                      placeholder="correo@empresa.com" className={SMTP_INPUT} />
-                  </div>
-                  <div>
-                    <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Contraseña / Token de App</label>
-                    <input type="password" value={smtpPass} onChange={e => setSmtpPass(e.target.value)}
-                      placeholder="••••••••••••" className={SMTP_INPUT} />
-                  </div>
-
-                  {/* TLS toggle */}
-                  <div className="flex items-center justify-between py-2">
-                    <div>
-                      <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">Usar TLS / SSL</p>
-                      <p className="text-xs text-gray-400">Conexión cifrada (recomendado)</p>
-                    </div>
-                    <button onClick={() => setSmtpTls(!smtpTls)}
-                      className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${smtpTls ? 'bg-teal-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
-                      <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200 ${smtpTls ? 'translate-x-5' : 'translate-x-0'}`} />
-                    </button>
-                  </div>
-
-                  <button
-                    onClick={async () => {
-                      setSmtpTesting(true);
-                      try {
-                        const res = await financeApi.probarConexionSmtp();
-                        if (res.ok) toast.success(res.message);
-                        else toast.error(res.message);
-                      } catch (e: any) {
-                        toast.error(e?.response?.data?.message || 'No se pudo probar la conexión.');
-                      } finally { setSmtpTesting(false); }
-                    }}
-                    disabled={smtpTesting}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-teal-500/20 hover:bg-teal-500/30 border border-teal-500/30 text-teal-600 dark:text-teal-400 text-sm font-medium transition-colors disabled:opacity-50">
-                    <Wifi className={`w-4 h-4 ${smtpTesting ? 'animate-spin' : ''}`} />
-                    {smtpTesting ? 'Probando...' : 'Probar Conexión'}
-                  </button>
-                  <button
-                    onClick={async () => {
-                      if (!smtpHost || !smtpUser) { toast.error('Host y Usuario son obligatorios.'); return; }
-                      setSmtpSaving(true);
-                      try {
-                        await financeApi.guardarConfigSmtp({
-                          host: smtpHost,
-                          port: Number(smtpPort) || 25565,
-                          usuario: smtpUser,
-                          password: smtpPass || undefined,
-                        });
-                        toast.success('Configuración SMTP guardada correctamente.');
-                      } catch (e: any) {
-                        toast.error(e?.response?.data?.message || 'Error al guardar configuración.');
-                      } finally { setSmtpSaving(false); }
-                    }}
-                    disabled={smtpSaving}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-white text-sm font-semibold transition-colors disabled:opacity-50">
-                    <Settings className={`w-4 h-4 ${smtpSaving ? 'animate-spin' : ''}`} />
-                    {smtpSaving ? 'Guardando...' : 'Guardar Configuración'}
-                  </button>
-                </div>
-              </div>
-
-              {/* Send section */}
-              <div className="flex flex-col gap-4">
-
-                {/* Email input */}
-                <div className={`${CARD} p-5`}>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-8 h-8 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                      <Mail className="w-4 h-4 text-blue-500" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Enviar Reportes</h4>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Destinatario del reporte PDF</p>
-                    </div>
-                  </div>
-                  <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Correo Destino</label>
-                  <input type="email" value={smtpEmail} onChange={e => setSmtpEmail(e.target.value)}
-                    placeholder="gerencia@paradiso.com" className={SMTP_INPUT} />
-                </div>
-
-                {/* Report buttons */}
-                <div className="flex flex-col gap-3">
-                  {[
-                    { type: 'INVENTARIO', label: 'Reporte de Inventario',  desc: 'Stock, categorías y mermas',     icon: Package,    color: TEAL  },
-                    { type: 'DESPACHOS',  label: 'Bitácora de Despachos',  desc: 'Historial y rutas logísticas',  icon: Truck,      color: BLUE  },
-                    { type: 'CUENTAS',    label: 'Cuentas por Pagar',      desc: 'Cuotas pendientes y vencimientos', icon: DollarSign, color: AMBER },
-                  ].map(({ type, label, desc, icon: Icon, color }) => (
-                    <div key={type} className={`${CARD} p-4 flex items-center gap-4`}>
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                        style={{ background: `${color}22` }}>
-                        <Icon className="w-5 h-5" style={{ color }} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-gray-900 dark:text-white">{label}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">{desc}</p>
-                      </div>
-                      <button
-                        onClick={async () => {
-                          if (!smtpEmail) { toast.error('Proporciona un correo de destino.'); return; }
-                          setSmtpSending(type);
-                          try {
-                            await financeApi.enviarReportePdf(type, smtpEmail);
-                            toast.success(`Reporte ${type} enviado a ${smtpEmail}`);
-                          } catch (e: any) {
-                            toast.error(e.response?.data?.message || 'Error SMTP al enviar el reporte.');
-                          } finally { setSmtpSending(''); }
-                        }}
-                        disabled={!!smtpSending}
-                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-colors disabled:opacity-50 flex-shrink-0"
-                        style={{ background: `${color}22`, color }}>
-                        <Send className={`w-4 h-4 ${smtpSending === type ? 'animate-ping' : ''}`} />
-                        Enviar
-                      </button>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Info note */}
-                <div className="border border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-4">
-                  <div className="flex items-start gap-3">
-                    <FileText className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">Sobre el Servidor de Correo</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-500 mt-1 leading-relaxed">
-                        El sistema SMTP de PARADISO permite enviar reportes PDF como adjuntos automáticos.
-                        Configure las credenciales del servidor (Gmail, Outlook o SMTP personalizado) para
-                        habilitar el envío automático y programado de reportes ejecutivos.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
 
       </AnimatePresence>
     </div>

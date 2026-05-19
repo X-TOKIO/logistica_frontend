@@ -86,6 +86,14 @@ export const financeApi = {
   getEstadisticasFinanzas: async () => (await api.get('/payments/estadisticas/finanzas')).data,
   enviarReportePdf: async (reportType: string, email: string, mensajePersonalizado?: string) =>
     (await api.post('/mail/reportes/enviar', { reportType, email, mensajePersonalizado })).data,
+  enviarPdfDirecto: async (dto: {
+    email: string;
+    pdfBase64: string;
+    filename: string;
+    asunto: string;
+    mensajePersonalizado?: string;
+    reportType?: string;
+  }) => (await api.post('/mail/reportes/enviar-pdf', dto)).data,
 
   // ── Config SMTP ──────────────────────────────────────────────────────────────
   getConfigSmtp: async (): Promise<{ host: string; port: number; usuario: string; passwordSet: boolean }> =>

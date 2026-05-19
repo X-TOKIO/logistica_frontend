@@ -306,162 +306,175 @@ export const FinanzasReportesTab = () => {
   }, [compras]);
 
   // ── PDF: Compras ──────────────────────────────────────────────────────────
+  const buildComprasDoc = () => {
+    const filtroDesc = [
+      cpPeriod !== 'todo' && cpValue ? `${cpPeriod === 'dia' ? 'Día' : cpPeriod === 'mes' ? 'Mes' : 'Año'}: ${cpValue}` : 'Todo el período',
+      cpProv !== 'all' ? `Proveedor: ${proveedoresUnicos.find((p: any) => p.id === cpProv)?.name || cpProv}` : 'Todos los proveedores',
+    ].join(' | ');
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    addPdfHeader(doc, `REPORTE DE COMPRAS — ${filtroDesc}`);
+    let y = 44;
+
+    const pdfPeriodLabel = cpPeriod === 'dia' ? 'COMPRAS DEL DÍA'
+      : cpPeriod === 'mes'  ? 'COMPRAS POR DÍA (MES)'
+      : cpPeriod === 'anio' ? 'COMPRAS POR MES (AÑO)'
+      : 'COMPRAS POR MES';
+    doc.setTextColor(30, 30, 30); doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+    doc.text(pdfPeriodLabel, 11, y); y += 4;
+    autoTable(doc, {
+      startY: y,
+      head: [['Período', 'Cantidad', 'Monto Total (Bs.)']],
+      body: comprasPorMes.map((r: any) => [r.mes, String(r.cantidad), Number(r.total).toLocaleString()]),
+      theme: 'grid',
+      headStyles: { fillColor: [20, 184, 166], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+      bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
+    });
+    y = ((doc as any).lastAutoTable?.finalY ?? 80) + 9;
+    if (y > 230) { doc.addPage(); addPdfHeader(doc, 'REPORTE DE COMPRAS'); y = 44; }
+
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+    doc.text('TOP PROVEEDORES', 11, y); y += 4;
+    autoTable(doc, {
+      startY: y,
+      head: [['Proveedor', 'Compras', 'Total (Bs.)']],
+      body: topProveedoresFiltrados.map((r: any) => [r.nombre, String(r.cantidad), r.total.toLocaleString()]),
+      theme: 'grid',
+      headStyles: { fillColor: [245, 158, 11], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+      bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
+    });
+    y = ((doc as any).lastAutoTable?.finalY ?? 110) + 9;
+    if (y > 230) { doc.addPage(); addPdfHeader(doc, 'REPORTE DE COMPRAS'); y = 44; }
+
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+    doc.text('TOP PRODUCTOS COMPRADOS', 11, y); y += 4;
+    autoTable(doc, {
+      startY: y,
+      head: [['Producto', 'Unidades', 'Subtotal (Bs.)']],
+      body: topProductosFiltrados.map((r: any) => [r.nombre, String(r.cantidad), r.total.toLocaleString()]),
+      theme: 'grid',
+      headStyles: { fillColor: [59, 130, 246], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+      bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
+    });
+    y = ((doc as any).lastAutoTable?.finalY ?? 140) + 9;
+    if (y > 230) { doc.addPage(); addPdfHeader(doc, 'REPORTE DE COMPRAS'); y = 44; }
+
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+    doc.text('MÉTODOS Y CONDICIÓN DE PAGO', 11, y); y += 4;
+    autoTable(doc, {
+      startY: y,
+      head: [['Tipo', 'Cantidad', 'Total (Bs.)']],
+      body: [
+        ...condicionPago.map((r: any) => [r.condicion, String(r.cantidad), r.total.toLocaleString()]),
+        ...metodosPago.map((r: any) => [`Pago: ${r.metodo}`, String(r.cantidad), r.total.toLocaleString()]),
+      ],
+      theme: 'grid',
+      headStyles: { fillColor: [139, 92, 246], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+      bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
+    });
+    addPdfFooter(doc);
+    return doc;
+  };
+
   const pdfCompras = async () => {
     setGenPdf('compras');
     try {
-      const filtroDesc = [
-        cpPeriod !== 'todo' && cpValue ? `${cpPeriod === 'dia' ? 'Día' : cpPeriod === 'mes' ? 'Mes' : 'Año'}: ${cpValue}` : 'Todo el período',
-        cpProv !== 'all' ? `Proveedor: ${proveedoresUnicos.find((p: any) => p.id === cpProv)?.name || cpProv}` : 'Todos los proveedores',
-      ].join(' | ');
-      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      addPdfHeader(doc, `REPORTE DE COMPRAS — ${filtroDesc}`);
-      let y = 44;
-
-      const pdfPeriodLabel = cpPeriod === 'dia' ? 'COMPRAS DEL DÍA'
-        : cpPeriod === 'mes'  ? 'COMPRAS POR DÍA (MES)'
-        : cpPeriod === 'anio' ? 'COMPRAS POR MES (AÑO)'
-        : 'COMPRAS POR MES';
-      doc.setTextColor(30, 30, 30); doc.setFontSize(10); doc.setFont('helvetica', 'bold');
-      doc.text(pdfPeriodLabel, 11, y); y += 4;
-      autoTable(doc, {
-        startY: y,
-        head: [['Período', 'Cantidad', 'Monto Total (Bs.)']],
-        body: comprasPorMes.map((r: any) => [r.mes, String(r.cantidad), Number(r.total).toLocaleString()]),
-        theme: 'grid',
-        headStyles: { fillColor: [20, 184, 166], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-        bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
-      });
-      y = ((doc as any).lastAutoTable?.finalY ?? 80) + 9;
-      if (y > 230) { doc.addPage(); addPdfHeader(doc, 'REPORTE DE COMPRAS'); y = 44; }
-
-      doc.setFontSize(10); doc.setFont('helvetica', 'bold');
-      doc.text('TOP PROVEEDORES', 11, y); y += 4;
-      autoTable(doc, {
-        startY: y,
-        head: [['Proveedor', 'Compras', 'Total (Bs.)']],
-        body: topProveedoresFiltrados.map((r: any) => [r.nombre, String(r.cantidad), r.total.toLocaleString()]),
-        theme: 'grid',
-        headStyles: { fillColor: [245, 158, 11], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-        bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
-      });
-      y = ((doc as any).lastAutoTable?.finalY ?? 110) + 9;
-      if (y > 230) { doc.addPage(); addPdfHeader(doc, 'REPORTE DE COMPRAS'); y = 44; }
-
-      doc.setFontSize(10); doc.setFont('helvetica', 'bold');
-      doc.text('TOP PRODUCTOS COMPRADOS', 11, y); y += 4;
-      autoTable(doc, {
-        startY: y,
-        head: [['Producto', 'Unidades', 'Subtotal (Bs.)']],
-        body: topProductosFiltrados.map((r: any) => [r.nombre, String(r.cantidad), r.total.toLocaleString()]),
-        theme: 'grid',
-        headStyles: { fillColor: [59, 130, 246], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-        bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
-      });
-      y = ((doc as any).lastAutoTable?.finalY ?? 140) + 9;
-      if (y > 230) { doc.addPage(); addPdfHeader(doc, 'REPORTE DE COMPRAS'); y = 44; }
-
-      doc.setFontSize(10); doc.setFont('helvetica', 'bold');
-      doc.text('MÉTODOS Y CONDICIÓN DE PAGO', 11, y); y += 4;
-      autoTable(doc, {
-        startY: y,
-        head: [['Tipo', 'Cantidad', 'Total (Bs.)']],
-        body: [
-          ...condicionPago.map((r: any) => [r.condicion, String(r.cantidad), r.total.toLocaleString()]),
-          ...metodosPago.map((r: any) => [`Pago: ${r.metodo}`, String(r.cantidad), r.total.toLocaleString()]),
-        ],
-        theme: 'grid',
-        headStyles: { fillColor: [139, 92, 246], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-        bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
-      });
-      addPdfFooter(doc);
-      doc.save(`PARADISO_Compras_${new Date().toISOString().slice(0, 10)}.pdf`);
+      buildComprasDoc().save(`PARADISO_Compras_${new Date().toISOString().slice(0, 10)}.pdf`);
       toast.success('PDF de Compras descargado.');
     } catch { toast.error('Error al generar PDF.'); }
     finally { setGenPdf(null); }
   };
 
   // ── PDF: CxP ─────────────────────────────────────────────────────────────
+  const buildCxPDoc = () => {
+    const filtroDescCxP = cxpPeriod !== 'todo' && cxpValue
+      ? `${cxpPeriod === 'dia' ? 'Día' : cxpPeriod === 'mes' ? 'Mes' : 'Año'}: ${cxpValue}`
+      : 'Todo el período';
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    addPdfHeader(doc, `REPORTE CUENTAS POR PAGAR — Vencimiento: ${filtroDescCxP}`);
+    let y = 44;
+
+    doc.setTextColor(30, 30, 30); doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+    doc.text('DEUDA POR PROVEEDOR', 11, y); y += 4;
+    autoTable(doc, {
+      startY: y,
+      head: [['Proveedor', 'Cuentas', 'Saldo Pendiente (Bs.)']],
+      body: deudaPorProv.map((r: any) => [r.nombre, String(r.cuentas), r.deuda.toLocaleString()]),
+      theme: 'grid',
+      headStyles: { fillColor: [239, 68, 68], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+      bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
+    });
+    y = ((doc as any).lastAutoTable?.finalY ?? 80) + 9;
+    if (y > 230) { doc.addPage(); addPdfHeader(doc, 'CUENTAS POR PAGAR'); y = 44; }
+
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+    doc.text('ESTADO DE CUENTAS', 11, y); y += 4;
+    autoTable(doc, {
+      startY: y,
+      head: [['Estado', 'Cantidad', 'Total (Bs.)']],
+      body: estadoCxP.map((r: any) => [r.estado, String(r.cantidad), r.total.toLocaleString()]),
+      theme: 'grid',
+      headStyles: { fillColor: [245, 158, 11], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+      bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
+    });
+    y = ((doc as any).lastAutoTable?.finalY ?? 110) + 9;
+    if (y > 230) { doc.addPage(); addPdfHeader(doc, 'CUENTAS POR PAGAR'); y = 44; }
+
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+    doc.text('RESUMEN DE CUOTAS', 11, y); y += 4;
+    autoTable(doc, {
+      startY: y,
+      head: [['Categoría', 'Cantidad', 'Monto Total (Bs.)']],
+      body: [
+        ['Cuotas Vencidas (sin pagar)',  String(cuotasVencidas.cantidad), cuotasVencidas.total.toLocaleString()],
+        ['Cuotas Próximas (≤ 30 días)', String(cuotasProximas.cantidad), cuotasProximas.total.toLocaleString()],
+      ],
+      theme: 'grid',
+      headStyles: { fillColor: [16, 185, 129], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+      bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
+    });
+    addPdfFooter(doc);
+    return doc;
+  };
+
   const pdfCxP = async () => {
     setGenPdf('cxp');
     try {
-      const filtroDescCxP = cxpPeriod !== 'todo' && cxpValue
-        ? `${cxpPeriod === 'dia' ? 'Día' : cxpPeriod === 'mes' ? 'Mes' : 'Año'}: ${cxpValue}`
-        : 'Todo el período';
-      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      addPdfHeader(doc, `REPORTE CUENTAS POR PAGAR — ${filtroDescCxP}`);
-      let y = 44;
-
-      doc.setTextColor(30, 30, 30); doc.setFontSize(10); doc.setFont('helvetica', 'bold');
-      doc.text('DEUDA POR PROVEEDOR', 11, y); y += 4;
-      autoTable(doc, {
-        startY: y,
-        head: [['Proveedor', 'Cuentas', 'Saldo Pendiente (Bs.)']],
-        body: deudaPorProv.map((r: any) => [r.nombre, String(r.cuentas), r.deuda.toLocaleString()]),
-        theme: 'grid',
-        headStyles: { fillColor: [239, 68, 68], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-        bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
-      });
-      y = ((doc as any).lastAutoTable?.finalY ?? 80) + 9;
-      if (y > 230) { doc.addPage(); addPdfHeader(doc, 'CUENTAS POR PAGAR'); y = 44; }
-
-      doc.setFontSize(10); doc.setFont('helvetica', 'bold');
-      doc.text('ESTADO DE CUENTAS', 11, y); y += 4;
-      autoTable(doc, {
-        startY: y,
-        head: [['Estado', 'Cantidad', 'Total (Bs.)']],
-        body: estadoCxP.map((r: any) => [r.estado, String(r.cantidad), r.total.toLocaleString()]),
-        theme: 'grid',
-        headStyles: { fillColor: [245, 158, 11], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-        bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
-      });
-      y = ((doc as any).lastAutoTable?.finalY ?? 110) + 9;
-      if (y > 230) { doc.addPage(); addPdfHeader(doc, 'CUENTAS POR PAGAR'); y = 44; }
-
-      doc.setFontSize(10); doc.setFont('helvetica', 'bold');
-      doc.text('RESUMEN DE CUOTAS', 11, y); y += 4;
-      autoTable(doc, {
-        startY: y,
-        head: [['Categoría', 'Cantidad', 'Monto Total (Bs.)']],
-        body: [
-          ['Cuotas Vencidas (sin pagar)',   String(cuotasVencidas.cantidad), cuotasVencidas.total.toLocaleString()],
-          ['Cuotas Próximas (≤ 30 días)',   String(cuotasProximas.cantidad), cuotasProximas.total.toLocaleString()],
-        ],
-        theme: 'grid',
-        headStyles: { fillColor: [16, 185, 129], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-        bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
-      });
-      addPdfFooter(doc);
-      doc.save(`PARADISO_CxP_${new Date().toISOString().slice(0, 10)}.pdf`);
+      buildCxPDoc().save(`PARADISO_CxP_${new Date().toISOString().slice(0, 10)}.pdf`);
       toast.success('PDF de Cuentas por Pagar descargado.');
     } catch { toast.error('Error al generar PDF.'); }
     finally { setGenPdf(null); }
   };
 
   // ── PDF: Proveedores ──────────────────────────────────────────────────────
+  const buildProveedoresDoc = () => {
+    const filtroDescProv = provPeriod !== 'todo' && provValue
+      ? `${provPeriod === 'dia' ? 'Día' : provPeriod === 'mes' ? 'Mes' : 'Año'}: ${provValue}`
+      : 'Todo el período';
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    addPdfHeader(doc, `REPORTE DE PROVEEDORES — Período: ${filtroDescProv}`);
+    let y = 44;
+
+    doc.setTextColor(30, 30, 30); doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+    doc.text('RANKING DE PROVEEDORES', 11, y); y += 4;
+    autoTable(doc, {
+      startY: y,
+      head: [['#', 'Proveedor', 'Compras', 'Total Comprado (Bs.)', '% del Total']],
+      body: topProveedoresFull.map((r: any, i: number) => {
+        const grandTotal = topProveedoresFull.reduce((s: number, x: any) => s + x.total, 0) || 1;
+        return [String(i + 1), r.nombre, String(r.cantidad), r.total.toLocaleString(), `${((r.total / grandTotal) * 100).toFixed(1)}%`];
+      }),
+      theme: 'grid',
+      headStyles: { fillColor: [59, 130, 246], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+      bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
+    });
+    addPdfFooter(doc);
+    return doc;
+  };
+
   const pdfProveedores = async () => {
     setGenPdf('proveedores');
     try {
-      const filtroDescProv = provPeriod !== 'todo' && provValue
-        ? `${provPeriod === 'dia' ? 'Día' : provPeriod === 'mes' ? 'Mes' : 'Año'}: ${provValue}`
-        : 'Todo el período';
-      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      addPdfHeader(doc, `REPORTE DE PROVEEDORES — ${filtroDescProv}`);
-      let y = 44;
-
-      doc.setTextColor(30, 30, 30); doc.setFontSize(10); doc.setFont('helvetica', 'bold');
-      doc.text('RANKING DE PROVEEDORES', 11, y); y += 4;
-      autoTable(doc, {
-        startY: y,
-        head: [['#', 'Proveedor', 'Compras', 'Total Comprado (Bs.)']],
-        body: topProveedoresFull.map((r: any, i: number) => [
-          String(i + 1), r.nombre, String(r.cantidad), r.total.toLocaleString(),
-        ]),
-        theme: 'grid',
-        headStyles: { fillColor: [59, 130, 246], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-        bodyStyles: { fontSize: 8 }, margin: { left: 11, right: 11 },
-      });
-      addPdfFooter(doc);
-      doc.save(`PARADISO_Proveedores_${new Date().toISOString().slice(0, 10)}.pdf`);
+      buildProveedoresDoc().save(`PARADISO_Proveedores_${new Date().toISOString().slice(0, 10)}.pdf`);
       toast.success('PDF de Proveedores descargado.');
     } catch { toast.error('Error al generar PDF.'); }
     finally { setGenPdf(null); }
@@ -471,7 +484,29 @@ export const FinanzasReportesTab = () => {
   const sendEmail = async (type: string, emailAddr: string, msg?: string) => {
     setSending(type);
     try {
-      await financeApi.enviarReportePdf(type, emailAddr, msg);
+      const today = new Date().toISOString().slice(0, 10);
+      let doc: jsPDF; let filename: string; let asunto: string;
+      if (type === 'COMPRAS') {
+        doc = buildComprasDoc();
+        filename = `PARADISO_Compras_${today}.pdf`;
+        asunto   = 'Reporte de Compras - PARADISO';
+      } else if (type === 'CUENTAS') {
+        doc = buildCxPDoc();
+        filename = `PARADISO_CxP_${today}.pdf`;
+        asunto   = 'Reporte de Cuentas por Pagar - PARADISO';
+      } else {
+        doc = buildProveedoresDoc();
+        filename = `PARADISO_Proveedores_${today}.pdf`;
+        asunto   = 'Ranking de Proveedores - PARADISO';
+      }
+      await financeApi.enviarPdfDirecto({
+        email:   emailAddr,
+        pdfBase64: doc.output('base64'),
+        filename,
+        asunto,
+        mensajePersonalizado: msg,
+        reportType: type,
+      });
       toast.success(`Reporte ${type} enviado a ${emailAddr}`);
       setModalType(null);
     } catch (e: any) {
@@ -502,8 +537,18 @@ export const FinanzasReportesTab = () => {
         onClose={() => setModalType(null)}
         reportTitle={modalType ? modalMeta[modalType]?.title ?? modalType : ''}
         reportSubtitle={modalType ? modalMeta[modalType]?.sub ?? '' : ''}
-        pdfInfoText="Se adjuntará un PDF con el reporte completo"
+        pdfInfoText="Se generará un PDF con los filtros activos aplicados"
         pdfInfoSub={modalType ? modalMeta[modalType]?.pdfSub ?? '' : ''}
+        filters={
+          modalType === 'COMPRAS' ? [
+            { label: 'Período',    value: cpPeriod !== 'todo' && cpValue ? `${cpPeriod === 'dia' ? 'Día' : cpPeriod === 'mes' ? 'Mes' : 'Año'}: ${cpValue}` : 'Todo' },
+            { label: 'Proveedor', value: cpProv !== 'all' ? proveedoresUnicos.find((p: any) => p.id === cpProv)?.name || cpProv : 'Todos' },
+          ] : modalType === 'CUENTAS' ? [
+            { label: 'Vencimiento', value: cxpPeriod !== 'todo' && cxpValue ? `${cxpPeriod === 'dia' ? 'Día' : cxpPeriod === 'mes' ? 'Mes' : 'Año'}: ${cxpValue}` : 'Todo' },
+          ] : modalType === 'PROVEEDORES' ? [
+            { label: 'Período', value: provPeriod !== 'todo' && provValue ? `${provPeriod === 'dia' ? 'Día' : provPeriod === 'mes' ? 'Mes' : 'Año'}: ${provValue}` : 'Todo' },
+          ] : []
+        }
         onSend={(email, msg) => { if (modalType) sendEmail(modalType, email, msg); }}
         sending={!!sending}
       />
