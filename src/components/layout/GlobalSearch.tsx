@@ -4,7 +4,8 @@ import {
   Search, Package, Building2, Users, Truck, ShoppingCart, Loader2,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { searchApi, GlobalSearchResult, SearchResultItem } from '../../services/search';
+import { searchApi } from '../../services/search';
+import type { GlobalSearchResult, SearchResultItem } from '../../services/search';
 
 // ── Metadatos de cada sección ──────────────────────────────────────────────
 
