@@ -34,7 +34,7 @@ export const GlobalSearch = ({ autoFocus, onSelect, className = '' }: GlobalSear
   const [open,    setOpen]    = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const timerRef     = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef     = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const navigate     = useNavigate();
 
   // Cierra el dropdown al hacer click fuera

@@ -7,7 +7,6 @@ import {
   Settings, ArrowLeft, Menu,
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { authAdminApi } from '../../services/auth.admin';
 import { toast } from 'sonner';
