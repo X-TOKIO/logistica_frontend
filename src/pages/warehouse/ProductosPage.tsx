@@ -13,6 +13,24 @@ import {
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
 
+const compressToBase64 = (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const img = new Image();
+    const blobUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      const MAX = 800;
+      const ratio = Math.min(1, MAX / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width  = Math.round(img.width  * ratio);
+      canvas.height = Math.round(img.height * ratio);
+      canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(blobUrl);
+      resolve(canvas.toDataURL('image/jpeg', 0.82));
+    };
+    img.onerror = () => { URL.revokeObjectURL(blobUrl); reject(new Error('No se pudo leer la imagen')); };
+    img.src = blobUrl;
+  });
+
 const INPUT = 'bg-surface rounded-md px-4 py-3 outline-none focus:ring-2 ring-primary border border-divider font-bold text-text w-full';
 
 const CAT_COLORS = [
@@ -55,7 +73,8 @@ const stockTotal  = (p: Producto) => {
 const fmtDate     = (d?: string | null) => d ? new Date(d).toLocaleDateString('es-BO', { dateStyle: 'medium' }) : '—';
 const resolveImg  = (url?: string | null): string => {
   if (!url) return '';
-  return url.startsWith('http') ? url : `${API_BASE}${url}`;
+  if (url.startsWith('data:') || url.startsWith('http')) return url;
+  return `${API_BASE}${url}`;
 };
 const stockBadge  = (total: number) =>
   total === 0 ? 'bg-red-500/10 text-red-500 border-red-500/20'
@@ -278,10 +297,9 @@ const FormModal = ({ initial, categorias, medidas, onClose, onSaved }: {
     if (imageFile) {
       setUploading(true);
       try {
-        const res = await warehouseApi.uploadProductImage(imageFile);
-        imageUrl = res.url;
+        imageUrl = await compressToBase64(imageFile);
       } catch {
-        toast.error('Error al subir la imagen. Verifica el archivo e intenta de nuevo.');
+        toast.error('Error al procesar la imagen. Verifica el archivo e intenta de nuevo.');
         setUploading(false);
         return;
       }
