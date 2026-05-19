@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { authAdminApi } from '../../services/auth.admin';
 import { toast } from 'sonner';
+import { GlobalSearch } from './GlobalSearch';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -364,32 +365,7 @@ const UserWidget = () => {
 
 export const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
   const { theme, setTheme, mode, setMode } = useTheme();
-  const [searchTerm, setSearchTerm] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
-  const navigate = useNavigate();
-
-  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      if (searchTerm.trim()) {
-        const term = searchTerm.trim().toUpperCase();
-        if (term.startsWith('EMP-')) {
-          navigate(`/empleados?q=${encodeURIComponent(term.replace('EMP-', ''))}`);
-        } else if (
-          term.startsWith('DSP-') ||
-          (term.includes('-') && !term.startsWith('COMP-') && !term.startsWith('PAR-')) ||
-          /^\d{1,4}$/.test(term)
-        ) {
-          navigate(`/logistica/monitor?q=${encodeURIComponent(term)}`);
-        } else if (term.startsWith('COMP-') || term.startsWith('PAR-') || /^\d{5,}$/.test(term)) {
-          navigate(`/pagos?q=${encodeURIComponent(term)}`);
-        } else {
-          navigate(`/inventario/productos?q=${encodeURIComponent(searchTerm)}`);
-        }
-      } else {
-        navigate(`/inventario/productos`);
-      }
-    }
-  };
 
   return (
     <header className="h-14 sm:h-16 fixed top-0 right-0 left-0 md:left-64 bg-background/95 backdrop-blur-md border-b border-divider z-10 flex items-center justify-between px-3 sm:px-6 gap-2 transition-colors duration-300">
@@ -403,40 +379,28 @@ export const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
         <Menu className="h-5 w-5 text-text" />
       </button>
 
-      {/* Search — desktop siempre visible, móvil como overlay */}
-      <div className="hidden sm:flex items-center bg-surface rounded-md px-4 py-2.5 flex-1 max-w-[440px] border border-divider focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
-        <Search className="h-5 w-5 text-primary flex-shrink-0" />
-        <input
-          type="text"
-          placeholder="Buscador global: Enter para buscar Productos..."
-          className="bg-transparent border-none outline-none ml-2 w-full text-sm text-text font-bold placeholder-gray-500"
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          onKeyDown={handleSearch}
-        />
+      {/* Buscador global — desktop */}
+      <div className="hidden sm:block flex-1 max-w-[440px]">
+        <GlobalSearch />
       </div>
 
-      {/* Search expandible móvil */}
+      {/* Buscador global — overlay móvil */}
       <AnimatePresence>
         {searchOpen && (
           <motion.div
             initial={{ opacity: 0, scaleX: 0.9 }}
             animate={{ opacity: 1, scaleX: 1 }}
             exit={{ opacity: 0, scaleX: 0.9 }}
-            className="sm:hidden absolute top-0 left-0 right-0 h-14 bg-background/98 backdrop-blur-md border-b border-divider flex items-center px-3 gap-2 z-20"
+            className="sm:hidden absolute top-0 left-0 right-0 min-h-14 bg-background/98 backdrop-blur-md border-b border-divider flex items-start px-3 pt-2 pb-2 gap-2 z-20"
           >
-            <Search className="h-5 w-5 text-primary flex-shrink-0" />
-            <input
-              autoFocus
-              type="text"
-              placeholder="Buscar productos..."
-              className="bg-transparent border-none outline-none flex-1 text-sm text-text font-bold placeholder-gray-500"
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              onKeyDown={e => { handleSearch(e); if (e.key === 'Enter') setSearchOpen(false); }}
-            />
-            <button onClick={() => { setSearchOpen(false); setSearchTerm(''); }}>
-              <X className="h-4 w-4 text-muted" />
+            <div className="flex-1">
+              <GlobalSearch autoFocus onSelect={() => setSearchOpen(false)} />
+            </div>
+            <button
+              className="mt-2.5 p-1 text-muted hover:text-text transition-colors"
+              onClick={() => setSearchOpen(false)}
+            >
+              <X className="h-4 w-4" />
             </button>
           </motion.div>
         )}
