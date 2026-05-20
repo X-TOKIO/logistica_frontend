@@ -242,8 +242,10 @@ export const MermasPage = () => {
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-2">
-                <div className="bg-card border border-orange-500/20 rounded-md p-4 sm:p-8 shadow-xl relative overflow-hidden h-max">
-                    <div className="absolute top-0 right-0 w-60 h-60 bg-orange-500/10 blur-[80px] rounded-full pointer-events-none"></div>
+                <div className="bg-card border border-orange-500/20 rounded-md p-4 sm:p-8 shadow-xl relative h-max">
+                    <div className="absolute inset-0 overflow-hidden rounded-md pointer-events-none">
+                        <div className="absolute top-0 right-0 w-60 h-60 bg-orange-500/10 blur-[80px] rounded-full"></div>
+                    </div>
                     <h3 className="text-2xl font-black text-text mb-6">Declaración de Baja</h3>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">

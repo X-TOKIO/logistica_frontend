@@ -388,7 +388,7 @@ export const EgresosPage = () => {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-2">
-        <div className="bg-card border border-divider rounded-md p-4 sm:p-8 relative overflow-hidden h-max">
+        <div className="bg-card border border-divider rounded-md p-4 sm:p-8 relative h-max">
           <h3 className="text-2xl font-semibold text-text mb-4">Nueva Boleta de Salida</h3>
 
           {/* Inputs de Fecha, Hora y Selectores */}
